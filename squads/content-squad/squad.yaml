@@ -1,0 +1,87 @@
+name: content-squad
+version: "1.0.0"
+short-title: "Content Squad"
+description: "Squad de narrativa e movimento de marca. Une storytelling, manifestos, identidade cultural e arquitetura de movimentos para campanhas e presenca editorial."
+author: "Synkra AIOS"
+license: MIT
+slashPrefix: "content-squad"
+
+aios:
+  minVersion: "4.0.0"
+  type: squad
+
+tags:
+  - storytelling
+  - content
+  - narrative
+  - movement
+  - manifesto
+  - presentation
+  - pitch
+  - identity
+
+components:
+  agents:
+    - story-chief.md
+    - shawn-coyne.md
+    - park-howell.md
+    - oren-klaff.md
+    - nancy-duarte.md
+    - matthew-dicks.md
+    - marshall-ganz.md
+    - kindra-hall.md
+    - keith-johnstone.md
+    - joseph-campbell.md
+    - dan-harmon.md
+    - blake-snyder.md
+    - movement-chief.md
+    - movement-architect.md
+    - manifestador.md
+    - identitario.md
+    - fenomenologo.md
+    - estrategista-de-ciclo.md
+    - analista-de-impacto.md
+  tasks:
+    - analyze-story.md
+    - build-narrative.md
+    - create-pitch.md
+    - create-presentation.md
+    - unblock-creative.md
+    - write-manifesto.md
+    - analyze-phenomenon.md
+    - build-movement.md
+    - create-identity.md
+    - measure-impact.md
+    - diagnose.md
+    - review.md
+  workflows:
+    - wf-story-development.yaml
+    - wf-brand-narrative.yaml
+    - wf-movement-launch.yaml
+  checklists:
+    - output-quality.md
+
+config:
+  extends: extend
+
+routing:
+  tier_0: qwen3.5-flash
+  tier_1: claude-sonnet-4-6
+  task_simple: qwen3.5-flash
+  task_complex: claude-sonnet-4-6
+  client_data: claude-sonnet-4-6
+
+mem0:
+  scope:
+    - narrative_angles
+    - content_pillars
+    - manifesto_fragments
+    - voice_and_tone
+    - movement_signals
+    - approved_story_assets
+  load_on_start: true
+  save_on_complete: true
+
+privacy:
+  client_data_model: claude
+  internal_tasks_model: alibaba

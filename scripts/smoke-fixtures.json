@@ -1,0 +1,38 @@
+{
+  "copy-squad": {
+    "workflow": "wf-full-copy-project",
+    "resolutions": {
+      "{assigned_specialist}": "eugene-schwartz",
+      "{matched_task}": "write-headline.md"
+    }
+  },
+  "brand-squad": {
+    "workflow": "wf-brand-creation",
+    "resolutions": {}
+  },
+  "hormozi-squad": {
+    "workflow": "wf-offer-creation",
+    "resolutions": {}
+  },
+  "content-squad": {
+    "workflow": "wf-story-development",
+    "resolutions": {
+      "{specialist}": "joseph-campbell",
+      "{routed by framework: joseph-campbell | blake-snyder | dan-harmon}": "joseph-campbell",
+      "{same specialist from Phase 2}": "joseph-campbell",
+      "{original framework specialist}": "joseph-campbell"
+    }
+  },
+  "traffic-masters": {
+    "workflow": "wf-account-audit",
+    "resolutions": {}
+  },
+  "data-squad": {
+    "workflow": "wf-analytics-setup",
+    "resolutions": {}
+  },
+  "c-level-squad": {
+    "workflow": "wf-strategic-planning",
+    "resolutions": {}
+  }
+}

@@ -1,0 +1,68 @@
+name: data-squad
+version: "1.0.0"
+short-title: "Data Squad"
+description: "Squad de 7 estrategistas data-driven — analytics (Kaushik), CLV (Fader), growth (Ellis), community (Spinks), customer success (Mehta), audience (Kao)."
+author: "Synkra AIOS"
+license: MIT
+slashPrefix: "data-squad"
+
+aios:
+  minVersion: "4.0.0"
+  type: squad
+
+tags:
+  - analytics
+  - growth
+  - customer-success
+  - community
+  - clv
+  - metrics
+  - retention
+
+components:
+  agents:
+    - data-chief.md
+    - avinash-kaushik.md
+    - peter-fader.md
+    - sean-ellis.md
+    - wes-kao.md
+    - nick-mehta.md
+    - david-spinks.md
+  tasks:
+    - analyze-data.md
+    - build-audience.md
+    - build-community-strategy.md
+    - diagnose.md
+    - measure-growth.md
+    - optimize-retention.md
+    - review.md
+  workflows:
+    - wf-analytics-setup.yaml
+    - wf-growth-sprint.yaml
+  checklists:
+    - output-quality.md
+
+config:
+  extends: extend
+
+routing:
+  tier_0: qwen3.5-flash
+  tier_1: qwen3.5-plus
+  task_simple: qwen3.5-flash
+  task_complex: qwen3.5-plus
+  client_data: claude-sonnet-4-6
+
+mem0:
+  scope:
+    - north_star_metrics
+    - experiment_results
+    - retention_insights
+    - audience_learnings
+    - dashboards_used
+    - reporting_preferences
+  load_on_start: true
+  save_on_complete: true
+
+privacy:
+  client_data_model: claude
+  internal_tasks_model: alibaba

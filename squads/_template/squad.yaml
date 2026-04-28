@@ -1,0 +1,84 @@
+name: nome-do-squad
+version: "1.0.0"
+short-title: "Nome do Squad"
+description: "Descrição clara do que este squad faz e quando deve ser acionado."
+author: "Synkra / BochechIA"
+license: MIT
+slashPrefix: "nome-do-squad"
+
+aios:
+  minVersion: "1.0.0"
+  type: squad
+
+tags:
+  - tag-1
+  - tag-2
+
+components:
+  agents:
+    # Tier 0 — Orquestrador (sempre existe, sempre é o *-chief)
+    - nome-chief.md
+    # Tier 1 — Agentes especializados
+    - agente-a.md
+    - agente-b.md
+
+  tasks:
+    - tarefa-a.md
+    - tarefa-b.md
+
+  workflows:
+    - wf-workflow-principal.yaml
+
+  checklists:
+    - output-quality.md
+
+config:
+  extends: extend
+
+# ─────────────────────────────────────────────
+# CAMPOS OBRIGATÓRIOS NO BOCHECHIA
+# ─────────────────────────────────────────────
+
+routing:
+  # Modelos disponíveis:
+  # qwen3.5-flash      → simples, orquestração interna ($0.03/M input)
+  # qwen3.5-plus       → médio, copy e análise ($0.40/M input)
+  # claude-sonnet-4-6  → alto, dados de cliente, brand ($3/M input)
+  # claude-opus-4-6    → crítico, C-level, raramente ($15/M input)
+
+  tier_0: qwen3.5-flash           # orquestrador — roteamento (Alibaba)
+  tier_1: qwen3.5-plus            # agentes principais (Alibaba)
+  task_simple: qwen3.5-flash      # ex: headlines, bullets, revisão
+  task_complex: claude-sonnet-4-6 # ex: copy crítico com dados de cliente
+
+  # Regra de privacidade — sobrescreve tudo
+  client_data: claude-sonnet-4-6  # SEMPRE para dados reais de cliente
+
+mem0:
+  # O que este squad salva na memória por cliente
+  scope:
+    - client_tone
+    - approved_copy
+    - failed_attempts
+    - personas
+    - objections
+    - competitors
+    # adicione campos específicos do squad aqui
+
+  load_on_start: true    # carrega contexto do cliente antes de toda tarefa
+  save_on_complete: true # salva fatos relevantes ao finalizar
+
+privacy:
+  # Regra de privacidade deste squad
+  # "claude" = dados de cliente só vão para Claude
+  # "alibaba" = tarefas internas sem dados de cliente (Qwen flash/plus)
+  client_data_model: claude
+  internal_tasks_model: alibaba
+
+# ─────────────────────────────────────────────
+# ARQUITETURA DE TIERS (opcional mas recomendado)
+# Documente aqui a lógica de tiers para o dashboard
+# ─────────────────────────────────────────────
+# tier_architecture:
+#   tier_0: Orquestração — nome-chief
+#   tier_1: Especialistas — agente-a, agente-b

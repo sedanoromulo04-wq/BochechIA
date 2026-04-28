@@ -1,0 +1,52 @@
+# Schema de registro de clientes do BochechIA
+# Arquivo: core/clients/registry.yaml
+# NUNCA commitar dados reais aqui — use variáveis de ambiente ou .env.local
+
+version: "1.0.0"
+
+# Exemplo de estrutura. Dados reais ficam fora do Git.
+clients:
+  - id: cliente-torq
+    name: "Romulo"                        # nome interno
+    company: "Torq"
+    niche: "Marketing Digital"            # ex: saúde, educação, infoprodutos
+    status: active                       # active | paused | completed
+    mem0_user_id: cliente-torq           # deve bater com o user_id no Mem0
+    squads_active:                       # quais squads estão ativos para este cliente
+      - traffic-masters
+      - copy-squad
+      - brand-squad
+    primary_contact: "romulo@torq.com"
+    start_date: "2025-01-15"
+    projects:
+      - id: projeto-001
+        name: "Campanha LinkedIn Tráfego"
+        squad: traffic-masters
+        status: active                # pending | active | review | completed
+      - id: projeto-002
+        name: "Brand Foundation"
+        squad: brand-squad
+        status: active
+  
+  - id: cliente-abc
+    name: "Cliente ABC"
+    company: "ABC Consulting"
+    niche: "Consultoria Empresarial"
+    status: active
+    mem0_user_id: cliente-abc
+    squads_active:
+      - copy-squad
+      - hormozi-squad
+    primary_contact: "contato@abc.com"
+    start_date: "2025-02-01"
+    projects:
+      - id: projeto-003
+        name: "Funil de Vendas"
+        squad: copy-squad
+        status: active
+
+# Como criar um novo cliente:
+# 1. Adicionar entrada neste arquivo (sem dados sensíveis)
+# 2. Criar escopo no Mem0: user_id=<client-id>
+# 3. Adicionar .env.local com dados privados se necessário
+# 4. O dashboard lerá este arquivo para listar clientes

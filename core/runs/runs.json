@@ -1,0 +1,285 @@
+[
+  {
+    "id": "run-1777233717304-dacdadbe",
+    "clientId": "cliente-exemplo",
+    "squadId": "copy-squad",
+    "taskName": "write-headline",
+    "prompt": "Escreva 5 headlines para um infoproduto de copywriting voltado para empreendedores brasileiros. Tom: direto, sem enrolacao, resultado claro. O produto ensina como escrever copy que converte.",
+    "hasClientData": true,
+    "status": "approved",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-26T20:01:57.306Z",
+    "steps": [
+      {
+        "squadId": "copy-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-26T20:01:59.658Z",
+        "finishedAt": "2026-04-26T20:02:09.912Z",
+        "inputTokens": 96,
+        "outputTokens": 475,
+        "costUsd": 0.007413,
+        "output": "# Headlines — Infoproduto de Copywriting\n**Cliente:** cliente-exemplo | **Tarefa:** write-headline\n\n---\n\n## 5 Headlines\n\n---\n\n**01**\n### Aprenda a Escrever Copy Que Vende — Sem Ser Redator, Sem Enrolar, Sem Desperdiçar Verba em Anúncio Que Não Converte\n\n---\n\n**02**\n### O Método Que Empreendedores Brasileiros Estão Usando Para Transformar Texto Comum em Página Que Fecha Venda Todo Dia\n\n---\n\n**03**\n### Pare de Perder Dinheiro Com Copy Fraca: Aprenda a Escrever a Oferta Certa, Para a Pessoa Certa, Na Hora Certa\n\n---\n\n**04**\n### Se Você Consegue Mandar uma Mensagem de WhatsApp, Você Consegue Escrever uma Copy Que Converte — Eu Mostro Como\n\n---\n\n**05**\n### Chega de Contratar Copywriter Caro Para Algo Que Você Mesmo Pode Fazer em Menos de 2 Horas\n\n---\n\n## Notas de Aplicação\n\n| Headline | Melhor uso | Por quê funciona |\n|---|---|---|\n| **01** | Página de vendas (hero) | Quebra objeção + benefício direto |\n| **02** | Anúncio no Meta/Instagram | Prova social implícita + resultado |\n| **03** | E-mail marketing | Dor específica + solução em 3 tempos |\n| **04** | Criativo em vídeo curto | Analogia simples, baixa resistência |\n| **05** | Anúncio direto ao ponto | Economia + autonomia, dói no bolso |\n\n---\n\n*copy-squad · BochechIA*"
+      }
+    ],
+    "startedAt": "2026-04-26T20:01:57.359Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-26T20:02:09.912Z",
+    "output": "# Headlines — Infoproduto de Copywriting\n**Cliente:** cliente-exemplo | **Tarefa:** write-headline\n\n---\n\n## 5 Headlines\n\n---\n\n**01**\n### Aprenda a Escrever Copy Que Vende — Sem Ser Redator, Sem Enrolar, Sem Desperdiçar Verba em Anúncio Que Não Converte\n\n---\n\n**02**\n### O Método Que Empreendedores Brasileiros Estão Usando Para Transformar Texto Comum em Página Que Fecha Venda Todo Dia\n\n---\n\n**03**\n### Pare de Perder Dinheiro Com Copy Fraca: Aprenda a Escrever a Oferta Certa, Para a Pessoa Certa, Na Hora Certa\n\n---\n\n**04**\n### Se Você Consegue Mandar uma Mensagem de WhatsApp, Você Consegue Escrever uma Copy Que Converte — Eu Mostro Como\n\n---\n\n**05**\n### Chega de Contratar Copywriter Caro Para Algo Que Você Mesmo Pode Fazer em Menos de 2 Horas\n\n---\n\n## Notas de Aplicação\n\n| Headline | Melhor uso | Por quê funciona |\n|---|---|---|\n| **01** | Página de vendas (hero) | Quebra objeção + benefício direto |\n| **02** | Anúncio no Meta/Instagram | Prova social implícita + resultado |\n| **03** | E-mail marketing | Dor específica + solução em 3 tempos |\n| **04** | Criativo em vídeo curto | Analogia simples, baixa resistência |\n| **05** | Anúncio direto ao ponto | Economia + autonomia, dói no bolso |\n\n---\n\n*copy-squad · BochechIA*",
+    "inputTokens": 96,
+    "outputTokens": 475,
+    "costUsd": 0.007413,
+    "approvedAt": "2026-04-26T20:02:38.674Z",
+    "approvedBy": "romulo",
+    "mem0Saved": true,
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "Escreva 5 headlines para um infoproduto de copywriting voltado para empreendedores brasileiros. Tom: direto, sem enrolacao, resultado claro. O produto ensina como escrever copy que converte.",
+        "createdAt": "2026-04-26T20:01:57.306Z"
+      }
+    ],
+    "childRunIds": []
+  },
+  {
+    "id": "run-1777296055054-10300a7e",
+    "clientId": "cliente-exemplo",
+    "squadId": "brand-squad",
+    "prompt": "preciso de um planejamento completo de marca para um professor de futevolei",
+    "hasClientData": true,
+    "status": "approved",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-27T13:20:55.055Z",
+    "steps": [
+      {
+        "squadId": "brand-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-27T13:20:59.365Z",
+        "finishedAt": "2026-04-27T13:21:39.508Z",
+        "inputTokens": 57,
+        "outputTokens": 2257,
+        "costUsd": 0.034026,
+        "output": "# 🏐 Planejamento Completo de Marca — Professor de Futevolei\n\n---\n\n## 1. DIAGNÓSTICO INICIAL\n\n### Perguntas que preciso que você responda para personalizar ao máximo:\n\nAntes de apresentar o planejamento completo, me conta:\n\n- **Qual é o nome do professor?**\n- **Qual cidade/região atua?**\n- **Tem algum apelido/nome já conhecido no esporte?**\n- **Público-alvo principal** (iniciantes, intermediários, atletas, crianças, adultos)?\n- **Já tem redes sociais ou site?**\n- **Qual diferencial ele acredita ter?**\n\n---\n\n> 💡 *Enquanto não tenho esses dados, vou montar um planejamento modelo completo que você pode adaptar.*\n\n---\n\n## 2. POSICIONAMENTO DE MARCA\n\n### 🎯 Proposta de Valor Central\n> **\"Mais do que uma aula — uma experiência que transforma movimento em paixão.\"**\n\n### Arquétipo de Marca\n| Arquétipo | Justificativa |\n|-----------|--------------|\n| **O Herói + O Sábio** | Inspira superação e transmite conhecimento técnico com autoridade |\n\n### Tom de Voz\n- ✅ Motivador, técnico mas acessível\n- ✅ Descontraído e próximo\n- ✅ Confiante sem ser arrogante\n- ❌ Formal demais\n- ❌ Genérico ou vago\n\n---\n\n## 3. IDENTIDADE VERBAL\n\n### Nome de Marca (opções)\n| Opção | Conceito |\n|-------|----------|\n| **[Nome] Futevolei** | Direto, pessoal e memorável |\n| **Academia FV [Nome]** | Transmite estrutura e profissionalismo |\n| **[Apelido] na Areia** | Descontraído, lifestyle |\n| **Escola de Futevolei [Nome]** | Autoridade e método |\n\n### Taglines sugeridas\n- *\"Onde o futebol encontra o vôlei — e você encontra seu melhor jogo.\"*\n- *\"Técnica, ritmo e paixão pela areia.\"*\n- *\"Aprenda com quem vive o esporte.\"*\n\n---\n\n## 4. IDENTIDADE VISUAL (Direcionamento)\n\n### Paleta de Cores Recomendada\n```\n🟡 Amarelo Areia    → Energia, praia, calor\n🔵 Azul Oceano      → Confiança, profundidade, esporte\n⚪ Branco           → Leveza, movimento, clareza\n🟤 Terracota/Areia  → Conexão com a praia e natureza\n```\n\n### Tipografia\n- **Principal:** Sans-serif moderna e forte (ex: Bebas Neue, Montserrat Bold)\n- **Secundária:** Leve e legível (ex: Poppins Regular)\n\n### Elementos Visuais\n- Silhuetas de jogadores em movimento\n- Texturas de areia e rede\n- Ícones de bola de futevolei\n- Fotografias autênticas (sem stock foto)\n\n### Estilo de Logo\n- Símbolo + Nome\n- Opções: jogador saltando / bola com rede / letras iniciais estilizadas\n\n---\n\n## 5. PRESENÇA DIGITAL\n\n### 🔵 Instagram (principal canal)\n**Pilares de conteúdo (divisão semanal):**\n\n| Pilar | % | Exemplos de post |\n|-------|---|-----------------|\n| **Técnica & Ensino** | 35% | Dicas de saque, manchete, armação |\n| **Bastidores & Lifestyle** | 25% | Treinos, praias, alunos |\n| **Resultados de Alunos** | 20% | Antes/depois, depoimentos |\n| **Motivação & Esporte** | 15% | Frases, reflexões |\n| **Divulgação de Aulas** | 5% | CTAs diretos |\n\n**Frequência recomendada:**\n- Feed: 4x por semana\n- Stories: diários\n- Reels: 3x por semana (maior alcance orgânico)\n\n---\n\n### 🎥 YouTube / TikTok (secundário)\n- Vídeos tutoriais de fundamentos\n- \"Erros comuns no futevolei\"\n- Desafios e challenges\n- Vlogs de torneios\n\n---\n\n### 🌐 Site/Link na Bio\nEstrutura mínima:\n1. Hero com foto + CTA \"Quero começar\"\n2. Sobre o professor\n3. Modalidades/Turmas\n4. Depoimentos\n5. Localização e contato\n6. WhatsApp flutuante\n\n---\n\n## 6. ESTRATÉGIA DE CONTEÚDO — 30 DIAS\n\n### Semana 1 — **Apresentação**\n- Quem sou eu + minha história no esporte\n- Por que ensino futevolei\n- Tour pela quadra/praia de treino\n- Dica técnica #1\n\n### Semana 2 — **Educação**\n- 3 erros que todo iniciante comete\n- Tutorial: como fazer a manchete perfeita\n- Depoimento de aluno\n- Curiosidade sobre o esporte\n\n### Semana 3 — **Prova Social**\n- Aluno do mês em destaque\n- Resultados reais com fotos/vídeos\n- Resposta às perguntas frequentes\n- Lives ou stories de treino\n\n### Semana 4 — **Conversão**\n- Oferta de aula experimental\n- FAQ sobre turmas e valores\n- Depoimento em vídeo\n- CTA forte para WhatsApp/DM\n\n---\n\n## 7. ESTRATÉGIA DE CAPTAÇÃO DE ALUNOS\n\n### Funil de Aquisição\n\n```\nTOPO      →  Reels virais + dicas gratuitas\nMEIO      →  Stories diários + engajamento\nFUNDO     →  Aula experimental + CTA direto\n```\n\n### Ações práticas:\n- **Aula experimental gratuita** ou com desconto\n- **Indicação premiada** (aluno indica, ganha desconto)\n- **Parceria com academias** da região\n- **Presença em torneios** locais com banner/material\n- **Google Meu Negócio** configurado e atualizado\n- **Grupos de WhatsApp** segmentados por turma\n\n---\n\n## 8. PACOTES E PRECIFICAÇÃO (Modelo)\n\n| Pacote | Frequência | Posicionamento |\n|--------|-----------|----------------|\n| **Iniciante** | 2x/semana | Entrada acessível |\n| **Intermediário** | 3x/semana | Desenvolvimento |\n| **Avançado/Personal** | À combinar | Premium |\n| **Turma Infantil** | 2x/semana | Nicho especial |\n| **Turma Feminina** | 2x/semana | Nicho especial |\n\n> 💡 Dica: não competir por preço — competir por **valor percebido**.\n\n---\n\n## 9. MÉTRICAS PARA ACOMPANHAR\n\n### Mensalmente:\n- [ ] Novos seguidores\n- [ ] Taxa de engajamento\n- [ ] Alcance dos Reels\n- [ ] Leads gerados (DMs/WhatsApp)\n- [ ] Taxa de conversão (lead → aluno)\n- [ ] NPS dos alunos (satisfação)\n\n---\n\n## 10. PRÓXIMOS PASSOS PRIORITÁRIOS\n\n### 🚀 Sprint das próximas 2 semanas:\n\n```\n✅ Semana 1:\n□ Definir nome e bio do perfil\n□ Fazer sessão de fotos profissional\n□ Criar identidade visual básica (logo + cores)\n□ Configurar Instagram e WhatsApp Business\n\n✅ Semana 2:\n□ Gravar os primeiros 3 Reels\n□ Criar destaque de stories (Turmas / Dicas / Sobre)\n□ Configurar Google Meu Negócio\n□ Lançar oferta de aula experimental\n```\n\n---\n\n## 💬 Próximo Passo Comigo\n\nMe responde as perguntas do início e eu **personalizo cada seção** com o nome real, cidade, diferencial e público do professor.\n\nPosso também gerar:\n- 📝 Bio completa para Instagram\n- 🗓️ Calendário editorial detalhado\n- 📊 Proposta de pacotes com precificação\n- 🎨 Brief completo para identidade visual\n\n**O que você quer aprofundar primeiro?** 🏐"
+      }
+    ],
+    "startedAt": "2026-04-27T13:20:55.064Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-27T13:21:39.508Z",
+    "output": "# 🏐 Planejamento Completo de Marca — Professor de Futevolei\n\n---\n\n## 1. DIAGNÓSTICO INICIAL\n\n### Perguntas que preciso que você responda para personalizar ao máximo:\n\nAntes de apresentar o planejamento completo, me conta:\n\n- **Qual é o nome do professor?**\n- **Qual cidade/região atua?**\n- **Tem algum apelido/nome já conhecido no esporte?**\n- **Público-alvo principal** (iniciantes, intermediários, atletas, crianças, adultos)?\n- **Já tem redes sociais ou site?**\n- **Qual diferencial ele acredita ter?**\n\n---\n\n> 💡 *Enquanto não tenho esses dados, vou montar um planejamento modelo completo que você pode adaptar.*\n\n---\n\n## 2. POSICIONAMENTO DE MARCA\n\n### 🎯 Proposta de Valor Central\n> **\"Mais do que uma aula — uma experiência que transforma movimento em paixão.\"**\n\n### Arquétipo de Marca\n| Arquétipo | Justificativa |\n|-----------|--------------|\n| **O Herói + O Sábio** | Inspira superação e transmite conhecimento técnico com autoridade |\n\n### Tom de Voz\n- ✅ Motivador, técnico mas acessível\n- ✅ Descontraído e próximo\n- ✅ Confiante sem ser arrogante\n- ❌ Formal demais\n- ❌ Genérico ou vago\n\n---\n\n## 3. IDENTIDADE VERBAL\n\n### Nome de Marca (opções)\n| Opção | Conceito |\n|-------|----------|\n| **[Nome] Futevolei** | Direto, pessoal e memorável |\n| **Academia FV [Nome]** | Transmite estrutura e profissionalismo |\n| **[Apelido] na Areia** | Descontraído, lifestyle |\n| **Escola de Futevolei [Nome]** | Autoridade e método |\n\n### Taglines sugeridas\n- *\"Onde o futebol encontra o vôlei — e você encontra seu melhor jogo.\"*\n- *\"Técnica, ritmo e paixão pela areia.\"*\n- *\"Aprenda com quem vive o esporte.\"*\n\n---\n\n## 4. IDENTIDADE VISUAL (Direcionamento)\n\n### Paleta de Cores Recomendada\n```\n🟡 Amarelo Areia    → Energia, praia, calor\n🔵 Azul Oceano      → Confiança, profundidade, esporte\n⚪ Branco           → Leveza, movimento, clareza\n🟤 Terracota/Areia  → Conexão com a praia e natureza\n```\n\n### Tipografia\n- **Principal:** Sans-serif moderna e forte (ex: Bebas Neue, Montserrat Bold)\n- **Secundária:** Leve e legível (ex: Poppins Regular)\n\n### Elementos Visuais\n- Silhuetas de jogadores em movimento\n- Texturas de areia e rede\n- Ícones de bola de futevolei\n- Fotografias autênticas (sem stock foto)\n\n### Estilo de Logo\n- Símbolo + Nome\n- Opções: jogador saltando / bola com rede / letras iniciais estilizadas\n\n---\n\n## 5. PRESENÇA DIGITAL\n\n### 🔵 Instagram (principal canal)\n**Pilares de conteúdo (divisão semanal):**\n\n| Pilar | % | Exemplos de post |\n|-------|---|-----------------|\n| **Técnica & Ensino** | 35% | Dicas de saque, manchete, armação |\n| **Bastidores & Lifestyle** | 25% | Treinos, praias, alunos |\n| **Resultados de Alunos** | 20% | Antes/depois, depoimentos |\n| **Motivação & Esporte** | 15% | Frases, reflexões |\n| **Divulgação de Aulas** | 5% | CTAs diretos |\n\n**Frequência recomendada:**\n- Feed: 4x por semana\n- Stories: diários\n- Reels: 3x por semana (maior alcance orgânico)\n\n---\n\n### 🎥 YouTube / TikTok (secundário)\n- Vídeos tutoriais de fundamentos\n- \"Erros comuns no futevolei\"\n- Desafios e challenges\n- Vlogs de torneios\n\n---\n\n### 🌐 Site/Link na Bio\nEstrutura mínima:\n1. Hero com foto + CTA \"Quero começar\"\n2. Sobre o professor\n3. Modalidades/Turmas\n4. Depoimentos\n5. Localização e contato\n6. WhatsApp flutuante\n\n---\n\n## 6. ESTRATÉGIA DE CONTEÚDO — 30 DIAS\n\n### Semana 1 — **Apresentação**\n- Quem sou eu + minha história no esporte\n- Por que ensino futevolei\n- Tour pela quadra/praia de treino\n- Dica técnica #1\n\n### Semana 2 — **Educação**\n- 3 erros que todo iniciante comete\n- Tutorial: como fazer a manchete perfeita\n- Depoimento de aluno\n- Curiosidade sobre o esporte\n\n### Semana 3 — **Prova Social**\n- Aluno do mês em destaque\n- Resultados reais com fotos/vídeos\n- Resposta às perguntas frequentes\n- Lives ou stories de treino\n\n### Semana 4 — **Conversão**\n- Oferta de aula experimental\n- FAQ sobre turmas e valores\n- Depoimento em vídeo\n- CTA forte para WhatsApp/DM\n\n---\n\n## 7. ESTRATÉGIA DE CAPTAÇÃO DE ALUNOS\n\n### Funil de Aquisição\n\n```\nTOPO      →  Reels virais + dicas gratuitas\nMEIO      →  Stories diários + engajamento\nFUNDO     →  Aula experimental + CTA direto\n```\n\n### Ações práticas:\n- **Aula experimental gratuita** ou com desconto\n- **Indicação premiada** (aluno indica, ganha desconto)\n- **Parceria com academias** da região\n- **Presença em torneios** locais com banner/material\n- **Google Meu Negócio** configurado e atualizado\n- **Grupos de WhatsApp** segmentados por turma\n\n---\n\n## 8. PACOTES E PRECIFICAÇÃO (Modelo)\n\n| Pacote | Frequência | Posicionamento |\n|--------|-----------|----------------|\n| **Iniciante** | 2x/semana | Entrada acessível |\n| **Intermediário** | 3x/semana | Desenvolvimento |\n| **Avançado/Personal** | À combinar | Premium |\n| **Turma Infantil** | 2x/semana | Nicho especial |\n| **Turma Feminina** | 2x/semana | Nicho especial |\n\n> 💡 Dica: não competir por preço — competir por **valor percebido**.\n\n---\n\n## 9. MÉTRICAS PARA ACOMPANHAR\n\n### Mensalmente:\n- [ ] Novos seguidores\n- [ ] Taxa de engajamento\n- [ ] Alcance dos Reels\n- [ ] Leads gerados (DMs/WhatsApp)\n- [ ] Taxa de conversão (lead → aluno)\n- [ ] NPS dos alunos (satisfação)\n\n---\n\n## 10. PRÓXIMOS PASSOS PRIORITÁRIOS\n\n### 🚀 Sprint das próximas 2 semanas:\n\n```\n✅ Semana 1:\n□ Definir nome e bio do perfil\n□ Fazer sessão de fotos profissional\n□ Criar identidade visual básica (logo + cores)\n□ Configurar Instagram e WhatsApp Business\n\n✅ Semana 2:\n□ Gravar os primeiros 3 Reels\n□ Criar destaque de stories (Turmas / Dicas / Sobre)\n□ Configurar Google Meu Negócio\n□ Lançar oferta de aula experimental\n```\n\n---\n\n## 💬 Próximo Passo Comigo\n\nMe responde as perguntas do início e eu **personalizo cada seção** com o nome real, cidade, diferencial e público do professor.\n\nPosso também gerar:\n- 📝 Bio completa para Instagram\n- 🗓️ Calendário editorial detalhado\n- 📊 Proposta de pacotes com precificação\n- 🎨 Brief completo para identidade visual\n\n**O que você quer aprofundar primeiro?** 🏐",
+    "inputTokens": 57,
+    "outputTokens": 2257,
+    "costUsd": 0.034026,
+    "approvedAt": "2026-04-27T13:23:01.903Z",
+    "approvedBy": "ceo",
+    "mem0Saved": true,
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "preciso de um planejamento completo de marca para um professor de futevolei",
+        "createdAt": "2026-04-27T13:20:55.055Z"
+      }
+    ],
+    "childRunIds": []
+  },
+  {
+    "id": "run-1777298488285-c6c7a7e8",
+    "clientId": "cliente-exemplo",
+    "squadId": "brand-squad",
+    "taskName": "create-brand-story",
+    "prompt": "professor de futevolei que precisa se posicionar",
+    "hasClientData": true,
+    "status": "approved",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-27T14:01:28.287Z",
+    "steps": [
+      {
+        "squadId": "brand-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-27T14:01:41.681Z",
+        "finishedAt": "2026-04-27T14:02:01.545Z",
+        "inputTokens": 55,
+        "outputTokens": 735,
+        "costUsd": 0.01119,
+        "output": "# Brand Story — Professor de Futevôlei\n\n## 🎯 Diagnóstico Inicial\n\nAntes de criar a história de marca, preciso entender melhor o seu cliente. Vou mapear os pontos essenciais:\n\n---\n\n## ❓ Perguntas Fundamentais\n\n### Sobre o Profissional\n1. **Qual o nome do professor?**\n2. **Há quanto tempo atua com futevôlei?** (como jogador e/ou professor)\n3. **Tem histórico como atleta competitivo?** Títulos, competições?\n4. **Onde atua?** (cidade, praia, clube, academia)\n\n### Sobre o Público\n5. **Para quem ensina hoje?** (iniciantes, intermediários, atletas, adultos 40+, mulheres, crianças?)\n6. **Qual a transformação principal que entrega?** (técnica, condicionamento, lazer, competição?)\n\n### Sobre o Posicionamento\n7. **O que ele quer ser conhecido?** (o melhor professor da cidade? referência nacional? o professor que humaniza o esporte?)\n8. **Qual o grande diferencial dele** em relação a outros professores?\n9. **Tem presença digital hoje?** (Instagram, YouTube, TikTok?)\n\n---\n\n## 🔥 Enquanto isso — Estrutura da Brand Story\n\nCom base no perfil **\"professor de futevôlei que precisa se posicionar\"**, aqui está um **rascunho base** para refinarmos:\n\n---\n\n### 📖 Brand Story — Versão Rascunho\n\n> *\"O futevôlei não é só um esporte. É onde o futebol encontra a praia, o corpo encontra o limite e o aluno encontra uma versão melhor de si mesmo.\"*\n>\n> **[Nome]** não chegou à beira da rede por acaso. [X] anos praticando, errando, caindo na areia e levantando ensinaram mais do que qualquer manual técnico poderia ensinar.\n>\n> Hoje, ele transforma essa vivência em método — um jeito único de ensinar que respeita o tempo de cada aluno, desafia no momento certo e celebra cada evolução como se fosse uma final de campeonato.\n>\n> Seja você que nunca tocou numa bola de futevôlei ou o atleta que quer dar o próximo nível: **aqui, você aprende com quem viveu o esporte de verdade.**\n\n---\n\n## 🚀 Próximos Passos\n\nMe responde as perguntas acima e eu entrego:\n\n- ✅ Brand Story finalizada e personalizada\n- ✅ Tagline/Slogan\n- ✅ Bio para Instagram\n- ✅ Tom de voz da marca\n- ✅ Pilares de conteúdo\n\n**Qual informação você consegue me passar agora?** 🏖️"
+      }
+    ],
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "professor de futevolei que precisa se posicionar",
+        "createdAt": "2026-04-27T14:01:28.287Z"
+      },
+      {
+        "role": "agent",
+        "content": "# Brand Story — Professor de Futevôlei\n\n## 🎯 Diagnóstico Inicial\n\nAntes de criar a história de marca, preciso entender melhor o seu cliente. Vou mapear os pontos essenciais:\n\n---\n\n## ❓ Perguntas Fundamentais\n\n### Sobre o Profissional\n1. **Qual o nome do professor?**\n2. **Há quanto tempo atua com futevôlei?** (como jogador e/ou professor)\n3. **Tem histórico como atleta competitivo?** Títulos, competições?\n4. **Onde atua?** (cidade, praia, clube, academia)\n\n### Sobre o Público\n5. **Para quem ensina hoje?** (iniciantes, intermediários, atletas, adultos 40+, mulheres, crianças?)\n6. **Qual a transformação principal que entrega?** (técnica, condicionamento, lazer, competição?)\n\n### Sobre o Posicionamento\n7. **O que ele quer ser conhecido?** (o melhor professor da cidade? referência nacional? o professor que humaniza o esporte?)\n8. **Qual o grande diferencial dele** em relação a outros professores?\n9. **Tem presença digital hoje?** (Instagram, YouTube, TikTok?)\n\n---\n\n## 🔥 Enquanto isso — Estrutura da Brand Story\n\nCom base no perfil **\"professor de futevôlei que precisa se posicionar\"**, aqui está um **rascunho base** para refinarmos:\n\n---\n\n### 📖 Brand Story — Versão Rascunho\n\n> *\"O futevôlei não é só um esporte. É onde o futebol encontra a praia, o corpo encontra o limite e o aluno encontra uma versão melhor de si mesmo.\"*\n>\n> **[Nome]** não chegou à beira da rede por acaso. [X] anos praticando, errando, caindo na areia e levantando ensinaram mais do que qualquer manual técnico poderia ensinar.\n>\n> Hoje, ele transforma essa vivência em método — um jeito único de ensinar que respeita o tempo de cada aluno, desafia no momento certo e celebra cada evolução como se fosse uma final de campeonato.\n>\n> Seja você que nunca tocou numa bola de futevôlei ou o atleta que quer dar o próximo nível: **aqui, você aprende com quem viveu o esporte de verdade.**\n\n---\n\n## 🚀 Próximos Passos\n\nMe responde as perguntas acima e eu entrego:\n\n- ✅ Brand Story finalizada e personalizada\n- ✅ Tagline/Slogan\n- ✅ Bio para Instagram\n- ✅ Tom de voz da marca\n- ✅ Pilares de conteúdo\n\n**Qual informação você consegue me passar agora?** 🏖️",
+        "createdAt": "2026-04-27T14:02:01.545Z",
+        "modelId": "claude-sonnet-4-6",
+        "inputTokens": 55,
+        "outputTokens": 735,
+        "costUsd": 0.01119
+      }
+    ],
+    "startedAt": "2026-04-27T14:01:28.301Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-27T14:02:01.545Z",
+    "output": "# Brand Story — Professor de Futevôlei\n\n## 🎯 Diagnóstico Inicial\n\nAntes de criar a história de marca, preciso entender melhor o seu cliente. Vou mapear os pontos essenciais:\n\n---\n\n## ❓ Perguntas Fundamentais\n\n### Sobre o Profissional\n1. **Qual o nome do professor?**\n2. **Há quanto tempo atua com futevôlei?** (como jogador e/ou professor)\n3. **Tem histórico como atleta competitivo?** Títulos, competições?\n4. **Onde atua?** (cidade, praia, clube, academia)\n\n### Sobre o Público\n5. **Para quem ensina hoje?** (iniciantes, intermediários, atletas, adultos 40+, mulheres, crianças?)\n6. **Qual a transformação principal que entrega?** (técnica, condicionamento, lazer, competição?)\n\n### Sobre o Posicionamento\n7. **O que ele quer ser conhecido?** (o melhor professor da cidade? referência nacional? o professor que humaniza o esporte?)\n8. **Qual o grande diferencial dele** em relação a outros professores?\n9. **Tem presença digital hoje?** (Instagram, YouTube, TikTok?)\n\n---\n\n## 🔥 Enquanto isso — Estrutura da Brand Story\n\nCom base no perfil **\"professor de futevôlei que precisa se posicionar\"**, aqui está um **rascunho base** para refinarmos:\n\n---\n\n### 📖 Brand Story — Versão Rascunho\n\n> *\"O futevôlei não é só um esporte. É onde o futebol encontra a praia, o corpo encontra o limite e o aluno encontra uma versão melhor de si mesmo.\"*\n>\n> **[Nome]** não chegou à beira da rede por acaso. [X] anos praticando, errando, caindo na areia e levantando ensinaram mais do que qualquer manual técnico poderia ensinar.\n>\n> Hoje, ele transforma essa vivência em método — um jeito único de ensinar que respeita o tempo de cada aluno, desafia no momento certo e celebra cada evolução como se fosse uma final de campeonato.\n>\n> Seja você que nunca tocou numa bola de futevôlei ou o atleta que quer dar o próximo nível: **aqui, você aprende com quem viveu o esporte de verdade.**\n\n---\n\n## 🚀 Próximos Passos\n\nMe responde as perguntas acima e eu entrego:\n\n- ✅ Brand Story finalizada e personalizada\n- ✅ Tagline/Slogan\n- ✅ Bio para Instagram\n- ✅ Tom de voz da marca\n- ✅ Pilares de conteúdo\n\n**Qual informação você consegue me passar agora?** 🏖️",
+    "inputTokens": 55,
+    "outputTokens": 735,
+    "costUsd": 0.01119,
+    "approvedAt": "2026-04-27T14:03:21.270Z",
+    "approvedBy": "ceo",
+    "mem0Saved": true
+  },
+  {
+    "id": "run-1777298917258-22392a57",
+    "clientId": "cliente-exemplo",
+    "squadId": "brand-squad",
+    "prompt": "professor de futevolei que precisa se posicionar",
+    "hasClientData": true,
+    "status": "awaiting_approval",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-27T14:08:37.259Z",
+    "steps": [
+      {
+        "squadId": "brand-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-27T14:08:41.217Z",
+        "finishedAt": "2026-04-27T14:08:50.926Z",
+        "inputTokens": 51,
+        "outputTokens": 380,
+        "costUsd": 0.005853,
+        "output": "# Posicionamento para Professor de Futevôlei 🏐⚽\n\nVou te ajudar a construir um posicionamento forte! Para isso, preciso entender melhor o seu perfil.\n\n---\n\n## Me conta um pouco mais:\n\n**Sobre você:**\n- Qual é a sua experiência? (anos de prática, competições, formação)\n- Você joga futevôlei competitivamente ou só ensina?\n- Tem alguma especialidade? (iniciantes, crianças, adultos, alto rendimento)\n\n**Sobre seu público:**\n- Para quem você quer dar aulas? (faixa etária, nível, perfil)\n- Onde você atua? (praia, academia, clube, condomínio)\n- Qual cidade/região?\n\n**Sobre seus objetivos:**\n- Quer mais alunos? Reconhecimento online? Parcerias?\n- Já tem redes sociais ativas?\n- Qual é o diferencial que você percebe em você mesmo?\n\n---\n\n## Por que isso importa?\n\nNo futevôlei, o mercado está crescendo rápido e professores que têm um **posicionamento claro** conseguem:\n\n✅ Cobrar mais pela aula  \n✅ Atrair o aluno certo  \n✅ Criar autoridade online  \n✅ Fidelizar alunos por mais tempo  \n\n---\n\n**Me responde essas perguntas que eu monto uma estratégia completa para você!** 🚀"
+      }
+    ],
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "professor de futevolei que precisa se posicionar",
+        "createdAt": "2026-04-27T14:08:37.259Z"
+      },
+      {
+        "role": "agent",
+        "content": "# Posicionamento para Professor de Futevôlei 🏐⚽\n\nVou te ajudar a construir um posicionamento forte! Para isso, preciso entender melhor o seu perfil.\n\n---\n\n## Me conta um pouco mais:\n\n**Sobre você:**\n- Qual é a sua experiência? (anos de prática, competições, formação)\n- Você joga futevôlei competitivamente ou só ensina?\n- Tem alguma especialidade? (iniciantes, crianças, adultos, alto rendimento)\n\n**Sobre seu público:**\n- Para quem você quer dar aulas? (faixa etária, nível, perfil)\n- Onde você atua? (praia, academia, clube, condomínio)\n- Qual cidade/região?\n\n**Sobre seus objetivos:**\n- Quer mais alunos? Reconhecimento online? Parcerias?\n- Já tem redes sociais ativas?\n- Qual é o diferencial que você percebe em você mesmo?\n\n---\n\n## Por que isso importa?\n\nNo futevôlei, o mercado está crescendo rápido e professores que têm um **posicionamento claro** conseguem:\n\n✅ Cobrar mais pela aula  \n✅ Atrair o aluno certo  \n✅ Criar autoridade online  \n✅ Fidelizar alunos por mais tempo  \n\n---\n\n**Me responde essas perguntas que eu monto uma estratégia completa para você!** 🚀",
+        "createdAt": "2026-04-27T14:08:50.926Z",
+        "modelId": "claude-sonnet-4-6",
+        "inputTokens": 51,
+        "outputTokens": 380,
+        "costUsd": 0.005853
+      }
+    ],
+    "startedAt": "2026-04-27T14:08:37.267Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-27T14:08:50.926Z",
+    "output": "# Posicionamento para Professor de Futevôlei 🏐⚽\n\nVou te ajudar a construir um posicionamento forte! Para isso, preciso entender melhor o seu perfil.\n\n---\n\n## Me conta um pouco mais:\n\n**Sobre você:**\n- Qual é a sua experiência? (anos de prática, competições, formação)\n- Você joga futevôlei competitivamente ou só ensina?\n- Tem alguma especialidade? (iniciantes, crianças, adultos, alto rendimento)\n\n**Sobre seu público:**\n- Para quem você quer dar aulas? (faixa etária, nível, perfil)\n- Onde você atua? (praia, academia, clube, condomínio)\n- Qual cidade/região?\n\n**Sobre seus objetivos:**\n- Quer mais alunos? Reconhecimento online? Parcerias?\n- Já tem redes sociais ativas?\n- Qual é o diferencial que você percebe em você mesmo?\n\n---\n\n## Por que isso importa?\n\nNo futevôlei, o mercado está crescendo rápido e professores que têm um **posicionamento claro** conseguem:\n\n✅ Cobrar mais pela aula  \n✅ Atrair o aluno certo  \n✅ Criar autoridade online  \n✅ Fidelizar alunos por mais tempo  \n\n---\n\n**Me responde essas perguntas que eu monto uma estratégia completa para você!** 🚀",
+    "inputTokens": 51,
+    "outputTokens": 380,
+    "costUsd": 0.005853,
+    "childRunIds": [
+      "run-1777299268432-737b398c"
+    ]
+  },
+  {
+    "id": "run-1777299268432-737b398c",
+    "clientId": "cliente-exemplo",
+    "squadId": "brand-squad",
+    "prompt": "## Output do brand-squad (aprovado)\n\n# Posicionamento para Professor de Futevôlei 🏐⚽\n\nVou te ajudar a construir um posicionamento forte! Para isso, preciso entender melhor o seu perfil.\n\n---\n\n## Me conta um pouco mais:\n\n**Sobre você:**\n- Qual é a sua experiência? (anos de prática, competições, formação)\n- Você joga futevôlei competitivamente ou só ensina?\n- Tem alguma especialidade? (iniciantes, crianças, adultos, alto rendimento)\n\n**Sobre seu público:**\n- Para quem você quer dar aulas? (faixa etária, nível, perfil)\n- Onde você atua? (praia, academia, clube, condomínio)\n- Qual cidade/região?\n\n**Sobre seus objetivos:**\n- Quer mais alunos? Reconhecimento online? Parcerias?\n- Já tem redes sociais ativas?\n- Qual é o diferencial que você percebe em você mesmo?\n\n---\n\n## Por que isso importa?\n\nNo futevôlei, o mercado está crescendo rápido e professores que têm um **posicionamento claro** conseguem:\n\n✅ Cobrar mais pela aula  \n✅ Atrair o aluno certo  \n✅ Criar autoridade online  \n✅ Fidelizar alunos por mais tempo  \n\n---\n\n**Me responde essas perguntas que eu monto uma estratégia completa para você!** 🚀",
+    "hasClientData": true,
+    "status": "rejected",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-27T14:14:28.433Z",
+    "steps": [
+      {
+        "squadId": "brand-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-27T14:14:31.401Z",
+        "finishedAt": "2026-04-27T14:14:36.467Z",
+        "inputTokens": 427,
+        "outputTokens": 177,
+        "costUsd": 0.003936,
+        "output": "# Olá! 👋\n\nSou o assistente do **BochechIA** e estou aqui para te ajudar!\n\n---\n\nParece que recebi um **output já aprovado** do brand-squad, mas ainda não tenho contexto sobre o que você precisa agora.\n\n## Como posso te ajudar?\n\n- 💬 Quer **responder as perguntas** do formulário acima para eu montar sua estratégia?\n- 🔄 Precisa de algo **diferente** do que foi apresentado?\n- ❓ Tem alguma **dúvida específica** sobre posicionamento?\n\n**É só me contar o que você precisa!** 🚀"
+      }
+    ],
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "## Output do brand-squad (aprovado)\n\n# Posicionamento para Professor de Futevôlei 🏐⚽\n\nVou te ajudar a construir um posicionamento forte! Para isso, preciso entender melhor o seu perfil.\n\n---\n\n## Me conta um pouco mais:\n\n**Sobre você:**\n- Qual é a sua experiência? (anos de prática, competições, formação)\n- Você joga futevôlei competitivamente ou só ensina?\n- Tem alguma especialidade? (iniciantes, crianças, adultos, alto rendimento)\n\n**Sobre seu público:**\n- Para quem você quer dar aulas? (faixa etária, nível, perfil)\n- Onde você atua? (praia, academia, clube, condomínio)\n- Qual cidade/região?\n\n**Sobre seus objetivos:**\n- Quer mais alunos? Reconhecimento online? Parcerias?\n- Já tem redes sociais ativas?\n- Qual é o diferencial que você percebe em você mesmo?\n\n---\n\n## Por que isso importa?\n\nNo futevôlei, o mercado está crescendo rápido e professores que têm um **posicionamento claro** conseguem:\n\n✅ Cobrar mais pela aula  \n✅ Atrair o aluno certo  \n✅ Criar autoridade online  \n✅ Fidelizar alunos por mais tempo  \n\n---\n\n**Me responde essas perguntas que eu monto uma estratégia completa para você!** 🚀",
+        "createdAt": "2026-04-27T14:14:28.433Z"
+      },
+      {
+        "role": "agent",
+        "content": "# Olá! 👋\n\nSou o assistente do **BochechIA** e estou aqui para te ajudar!\n\n---\n\nParece que recebi um **output já aprovado** do brand-squad, mas ainda não tenho contexto sobre o que você precisa agora.\n\n## Como posso te ajudar?\n\n- 💬 Quer **responder as perguntas** do formulário acima para eu montar sua estratégia?\n- 🔄 Precisa de algo **diferente** do que foi apresentado?\n- ❓ Tem alguma **dúvida específica** sobre posicionamento?\n\n**É só me contar o que você precisa!** 🚀",
+        "createdAt": "2026-04-27T14:14:36.467Z",
+        "modelId": "claude-sonnet-4-6",
+        "inputTokens": 427,
+        "outputTokens": 177,
+        "costUsd": 0.003936
+      }
+    ],
+    "parentRunId": "run-1777298917258-22392a57",
+    "startedAt": "2026-04-27T14:14:28.510Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-27T14:14:36.467Z",
+    "output": "# Olá! 👋\n\nSou o assistente do **BochechIA** e estou aqui para te ajudar!\n\n---\n\nParece que recebi um **output já aprovado** do brand-squad, mas ainda não tenho contexto sobre o que você precisa agora.\n\n## Como posso te ajudar?\n\n- 💬 Quer **responder as perguntas** do formulário acima para eu montar sua estratégia?\n- 🔄 Precisa de algo **diferente** do que foi apresentado?\n- ❓ Tem alguma **dúvida específica** sobre posicionamento?\n\n**É só me contar o que você precisa!** 🚀",
+    "inputTokens": 427,
+    "outputTokens": 177,
+    "costUsd": 0.003936,
+    "rejectedAt": "2026-04-27T14:29:10.078Z",
+    "rejectionReason": ""
+  },
+  {
+    "id": "run-1777384260252-51544a21",
+    "clientId": "cliente-torq",
+    "squadId": "copy-squad",
+    "prompt": "vamos traçar uma estratégia de copy para construção de conteúdos?\n",
+    "hasClientData": true,
+    "status": "awaiting_approval",
+    "modelId": "claude-sonnet-4-6",
+    "provider": "anthropic",
+    "createdAt": "2026-04-28T13:51:00.261Z",
+    "steps": [
+      {
+        "squadId": "copy-squad",
+        "agentId": "orchestrator",
+        "modelId": "claude-sonnet-4-6",
+        "startedAt": "2026-04-28T13:51:07.014Z",
+        "finishedAt": "2026-04-28T13:51:17.103Z",
+        "inputTokens": 61,
+        "outputTokens": 422,
+        "costUsd": 0.006513,
+        "output": "# Estratégia de Copy — Cliente Torq 🎯\n\nVamos construir isso de forma estruturada. Antes de traçar a estratégia completa, preciso alinhar alguns pontos fundamentais.\n\n---\n\n## 📋 Perguntas de Diagnóstico\n\n### Sobre o Negócio\n- Qual é o **produto/serviço principal** da Torq?\n- Qual é o **modelo de negócio** (B2B, B2C, SaaS, e-commerce...)?\n- Qual o **ticket médio** ou modelo de receita?\n\n### Sobre o Público\n- Quem é o **ICP** (perfil de cliente ideal)?\n- Quais são as principais **dores e objeções** desse público?\n- Qual o **nível de consciência** do cliente sobre o problema/solução?\n\n### Sobre os Canais\n- Quais **canais** serão usados? *(Instagram, LinkedIn, email, blog, ads...)*\n- Existe algum **conteúdo já produzido** que posso analisar?\n\n### Sobre os Objetivos\n- O foco agora é **topo, meio ou fundo** de funil?\n- A meta é **autoridade, geração de leads ou conversão**?\n\n---\n\n## 🚀 O que vamos montar depois do diagnóstico\n\n```\n├── Pilares de Conteúdo\n├── Tom de Voz e Linguagem\n├── Frameworks de Copy por Canal\n├── Calendário Editorial (estrutura)\n└── KPIs para medir resultado\n```\n\n---\n\nMe passa o que você já tem sobre a Torq e a gente começa! 💬"
+      }
+    ],
+    "messages": [
+      {
+        "role": "ceo",
+        "content": "vamos traçar uma estratégia de copy para construção de conteúdos?\n",
+        "createdAt": "2026-04-28T13:51:00.261Z"
+      },
+      {
+        "role": "agent",
+        "content": "# Estratégia de Copy — Cliente Torq 🎯\n\nVamos construir isso de forma estruturada. Antes de traçar a estratégia completa, preciso alinhar alguns pontos fundamentais.\n\n---\n\n## 📋 Perguntas de Diagnóstico\n\n### Sobre o Negócio\n- Qual é o **produto/serviço principal** da Torq?\n- Qual é o **modelo de negócio** (B2B, B2C, SaaS, e-commerce...)?\n- Qual o **ticket médio** ou modelo de receita?\n\n### Sobre o Público\n- Quem é o **ICP** (perfil de cliente ideal)?\n- Quais são as principais **dores e objeções** desse público?\n- Qual o **nível de consciência** do cliente sobre o problema/solução?\n\n### Sobre os Canais\n- Quais **canais** serão usados? *(Instagram, LinkedIn, email, blog, ads...)*\n- Existe algum **conteúdo já produzido** que posso analisar?\n\n### Sobre os Objetivos\n- O foco agora é **topo, meio ou fundo** de funil?\n- A meta é **autoridade, geração de leads ou conversão**?\n\n---\n\n## 🚀 O que vamos montar depois do diagnóstico\n\n```\n├── Pilares de Conteúdo\n├── Tom de Voz e Linguagem\n├── Frameworks de Copy por Canal\n├── Calendário Editorial (estrutura)\n└── KPIs para medir resultado\n```\n\n---\n\nMe passa o que você já tem sobre a Torq e a gente começa! 💬",
+        "createdAt": "2026-04-28T13:51:17.103Z",
+        "modelId": "claude-sonnet-4-6",
+        "inputTokens": 61,
+        "outputTokens": 422,
+        "costUsd": 0.006513
+      }
+    ],
+    "startedAt": "2026-04-28T13:51:00.311Z",
+    "mem0Loaded": true,
+    "finishedAt": "2026-04-28T13:51:17.103Z",
+    "output": "# Estratégia de Copy — Cliente Torq 🎯\n\nVamos construir isso de forma estruturada. Antes de traçar a estratégia completa, preciso alinhar alguns pontos fundamentais.\n\n---\n\n## 📋 Perguntas de Diagnóstico\n\n### Sobre o Negócio\n- Qual é o **produto/serviço principal** da Torq?\n- Qual é o **modelo de negócio** (B2B, B2C, SaaS, e-commerce...)?\n- Qual o **ticket médio** ou modelo de receita?\n\n### Sobre o Público\n- Quem é o **ICP** (perfil de cliente ideal)?\n- Quais são as principais **dores e objeções** desse público?\n- Qual o **nível de consciência** do cliente sobre o problema/solução?\n\n### Sobre os Canais\n- Quais **canais** serão usados? *(Instagram, LinkedIn, email, blog, ads...)*\n- Existe algum **conteúdo já produzido** que posso analisar?\n\n### Sobre os Objetivos\n- O foco agora é **topo, meio ou fundo** de funil?\n- A meta é **autoridade, geração de leads ou conversão**?\n\n---\n\n## 🚀 O que vamos montar depois do diagnóstico\n\n```\n├── Pilares de Conteúdo\n├── Tom de Voz e Linguagem\n├── Frameworks de Copy por Canal\n├── Calendário Editorial (estrutura)\n└── KPIs para medir resultado\n```\n\n---\n\nMe passa o que você já tem sobre a Torq e a gente começa! 💬",
+    "inputTokens": 61,
+    "outputTokens": 422,
+    "costUsd": 0.006513
+  }
+]

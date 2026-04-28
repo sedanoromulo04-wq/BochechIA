@@ -1,0 +1,126 @@
+version: "1.0.0"
+description: "Schema de memória Mem0 para o BochechIA. Define o que salvar, como organizar e como recuperar."
+
+# Configuração global do Mem0
+config:
+  app_id: bochechia
+  provider: mem0
+  mcp_server: true   # usa via MCP no Claude Code
+
+# Escopos de memória
+scopes:
+  client:
+    key: user_id
+    format: "cliente-{nome}"    # ex: cliente-torq, cliente-abc
+    description: Memórias que pertencem a um cliente específico, persistem entre sessões
+
+  squad:
+    key: agent_id
+    format: "{nome-do-squad}"   # ex: copy-squad, brand-squad
+    description: Memórias de como cada squad trabalha com este cliente
+
+  session:
+    key: run_id
+    format: "session-{timestamp}"
+    description: Contexto da sessão atual — descartado após conclusão
+
+  global:
+    key: app_id
+    value: bochechia
+    description: Memórias globais do sistema — padrões, aprendizados gerais
+
+# O que salvar por categoria
+memory_types:
+
+  brand:
+    scope: client
+    fields:
+      - client_tone           # tom de voz aprovado
+      - brand_personality     # personalidade da marca
+      - positioning           # posicionamento final
+      - category_thesis       # tese de categoria aprovada
+      - brand_colors          # paleta aprovada
+      - brand_fonts           # tipografia aprovada
+      - tagline               # tagline aprovada
+    save_when: após aprovação humana explícita
+
+  audience:
+    scope: client
+    fields:
+      - primary_persona       # persona principal com dores e desejos
+      - secondary_personas    # personas secundárias
+      - objections            # objeções mapeadas
+      - language_patterns     # como o público fala (termos, gírias)
+      - demographics          # dados demográficos
+    save_when: após pesquisa de mercado ou diagnóstico
+
+  copy:
+    scope: client + squad
+    fields:
+      - approved_headlines     # headlines que converteram
+      - approved_hooks         # hooks aprovados
+      - approved_ctas          # CTAs que funcionaram
+      - failed_copy            # copy que não funcionou (com motivo)
+      - best_copywriter        # qual persona funciona melhor para este cliente
+    save_when: após revisão e aprovação do output
+
+  offers:
+    scope: client
+    fields:
+      - current_offer          # oferta principal atual
+      - tested_offers          # ofertas testadas com resultados
+      - pricing_approved       # preço aprovado e justificativa
+      - value_stack            # stack de valor definida
+      - bonuses                # bônus aprovados
+    save_when: após aprovação da oferta
+
+  competition:
+    scope: client
+    fields:
+      - direct_competitors     # concorrentes diretos mapeados
+      - indirect_competitors   # concorrentes indiretos
+      - market_gaps            # lacunas de mercado identificadas
+      - competitor_weaknesses  # fraquezas dos concorrentes
+    save_when: após pesquisa de mercado
+
+  performance:
+    scope: client + squad
+    fields:
+      - what_worked            # o que funcionou neste cliente
+      - what_failed            # o que não funcionou
+      - best_models            # quais modelos deram melhores resultados
+      - session_learnings      # aprendizados da sessão
+    save_when: ao finalizar cada sessão produtiva
+
+# O que NUNCA salvar no Mem0
+never_save:
+  - dados pessoais identificáveis (CPF, endereço, telefone)
+  - informações financeiras ou contratuais
+  - senhas ou credenciais
+  - conteúdo bruto não aprovado
+  - drafts intermediários
+
+# Fluxo padrão de uso
+workflow:
+  before_task:
+    - step: 1
+      action: Carregar contexto do cliente
+      call: mem0.search(user_id=client_id, agent_id=squad_name, query=task_description)
+    - step: 2
+      action: Injetar contexto no prompt do agente
+      note: O contexto Mem0 substitui a necessidade de reler documentos longos
+
+  after_task:
+    - step: 1
+      action: Identificar fatos relevantes gerados
+      note: Só salva o que foi aprovado ou confirmado como útil
+    - step: 2
+      action: Salvar no Mem0 com escopos corretos
+      call: mem0.add(user_id=client_id, agent_id=squad_name, memory=facts)
+
+# Estimativa de economia
+economy:
+  full_context_tokens: 26000  # tokens médios sem memória
+  mem0_tokens: 1764           # tokens médios com Mem0
+  reduction: "~90%"
+  source: "LOCOMO benchmark, Mem0 research paper ECAI 2025"

@@ -1,0 +1,215 @@
+version: "1.1.0"
+updated: "2026-04-26"
+description: "Roteamento de modelos do BochechIA. Fonte da verdade para decisões de qual modelo usar."
+
+# Regra de privacidade — sobrescreve qualquer outra regra
+privacy:
+  client_data_model: claude-sonnet-4-6
+  rule: "Se a tarefa envolve dados reais de cliente (nome, marca, estratégia, copy aprovado),
+         use SEMPRE claude-sonnet-4-6 ou superior. Nunca Alibaba/Qwen para dados de cliente."
+
+# Modelos disponíveis
+models:
+  flash:
+    id: qwen3.5-flash
+    provider: alibaba
+    cost_input: 0.03   # USD por 1M tokens
+    cost_output: 0.29
+    context: 1000000
+    use_for: tarefas simples, orquestração interna, formatação, revisão rápida
+
+  pro:
+    id: qwen3.5-plus
+    provider: alibaba
+    cost_input: 0.40
+    cost_output: 2.40
+    context: 1000000
+    use_for: copy estruturado, análise de frameworks, email sequences, pesquisa
+
+  sonnet:
+    id: claude-sonnet-4-6
+    cost_input: 3.00
+    cost_output: 15.00
+    context: 200000
+    use_for: estratégia de marca, copy de alto valor, brand foundation, dados de cliente
+
+  opus:
+    id: claude-opus-4-6
+    cost_input: 15.00
+    cost_output: 75.00
+    context: 200000
+    use_for: decisões C-level, posicionamento crítico, tese de categoria, raramente
+
+# Roteamento por squad
+squads:
+  copy-squad:
+    chief: flash          # orquestrador — roteamento interno
+    tier_1a: pro          # Direct Response Legends — alta complexidade
+    tier_1b: pro          # Modern & Funnels
+    tier_1c: flash        # Email & Relationship — alta frequência
+    tier_1d: pro          # Offers & Sales Pages
+    task_simple: flash    # write-headline, write-bullets, review
+    task_complex: sonnet  # write-sales-letter, write-vsl-script com dados de cliente
+
+  hormozi-squad:
+    chief: flash
+    advisor: pro
+    offers: pro
+    pricing: pro
+    leads: pro
+    copy: pro
+    ads: pro
+    content: flash
+    hooks: flash
+    launch: pro
+    closer: pro
+    workshop: pro
+    retention: flash
+    scale: pro
+    models: flash
+    audit: flash
+
+  brand-squad:
+    default: sonnet       # sempre Sonnet — dados de marca são dados de cliente
+    critical: opus        # posicionamento final, tese aprovada
+
+  c-level-squad:
+    default: opus         # decisões estratégicas críticas
+    advisory: sonnet      # análise e brainstorm
+    reports: flash        # formatação de relatórios
+
+  content-squad:
+    storytelling: sonnet
+    movement: sonnet
+    hooks: flash
+    calendar: flash
+
+  traffic-masters:
+    strategy: pro
+    analysis: pro
+    reports: flash
+    creative_brief: sonnet  # briefing com dados de cliente
+
+  data-squad:
+    analysis: pro
+    formatting: flash
+    insights: pro
+    report_generation: flash
+
+# Roteamento por tipo de tarefa (independente do squad)
+tasks:
+  # Simples → Flash
+  - name: write-headline
+    model: flash
+  - name: write-bullets
+    model: flash
+  - name: review
+    model: flash
+  - name: diagnose
+    model: flash
+  - name: create-hooks
+    model: flash
+  - name: unblock-creative
+    model: flash
+
+  # Médio → Pro
+  - name: analyze-data
+    model: pro
+  - name: write-email-sequence
+    model: pro
+  - name: create-offer
+    model: pro
+  - name: write-ad-copy
+    model: pro
+  - name: analyze-copy
+    model: pro
+  - name: generate-leads
+    model: pro
+  - name: set-pricing
+    model: pro
+  - name: audit-business
+    model: pro
+  - name: plan-launch
+    model: pro
+  - name: critique-copy
+    model: pro
+  - name: close-sale
+    model: pro
+  - name: design-workshop
+    model: pro
+  - name: analyze-performance
+    model: pro
+  - name: audit-ad-account
+    model: pro
+  - name: create-ad-creative
+    model: pro
+  - name: create-ad-strategy
+    model: pro
+  - name: manage-budget
+    model: pro
+  - name: scale-campaign
+    model: pro
+  - name: setup-tracking
+    model: pro
+  - name: build-audience
+    model: pro
+  - name: build-community-strategy
+    model: pro
+  - name: measure-growth
+    model: pro
+  - name: optimize-retention
+    model: pro
+  - name: measure-impact
+    model: pro
+  - name: create-pitch
+    model: pro
+  - name: create-presentation
+    model: pro
+
+  # Alto → Sonnet (dados de cliente sempre presentes)
+  - name: write-sales-letter
+    model: sonnet
+  - name: write-vsl-script
+    model: sonnet
+  - name: create-funnel-copy
+    model: sonnet
+  - name: write-landing-page
+    model: sonnet
+  - name: audit-brand
+    model: sonnet
+  - name: build-identity
+    model: sonnet
+  - name: create-brand-story
+    model: sonnet
+  - name: create-positioning
+    model: sonnet
+  - name: design-architecture
+    model: sonnet
+  - name: generate-names
+    model: sonnet
+  - name: map-archetype
+    model: sonnet
+  - name: analyze-phenomenon
+    model: sonnet
+  - name: analyze-story
+    model: sonnet
+  - name: build-movement
+    model: sonnet
+  - name: build-narrative
+    model: sonnet
+  - name: create-identity
+    model: sonnet
+  - name: design-operations
+    model: sonnet
+  - name: evaluate-technology
+    model: sonnet
+  - name: plan-go-to-market
+    model: sonnet
+
+  # Crítico → Opus
+  - name: plan-fundraise
+    model: opus
+  - name: set-vision
+    model: opus
+  - name: write-manifesto
+    model: opus
