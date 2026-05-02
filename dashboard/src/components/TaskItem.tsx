@@ -11,8 +11,6 @@ import {
   AlertTriangle,
   Play,
   Pause,
-  User,
-  Calendar,
   MessageSquare,
   Zap,
   Workflow,

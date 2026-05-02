@@ -41,7 +41,6 @@ export async function getModelSpec(tier: ModelTier): Promise<ModelSpec> {
 }
 
 export async function getAllModels(): Promise<ModelSpec[]> {
-  const routing = await loadRouting();
   const tiers: ModelTier[] = ["flash", "pro", "sonnet", "opus"];
   return Promise.all(tiers.map((t) => getModelSpec(t)));
 }

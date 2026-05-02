@@ -75,6 +75,7 @@ export async function loadContext(
   squadId: string,
   query: string,
   runId?: string,
+  projectId?: string,
 ): Promise<{ memories: Mem0Memory[]; contextBlock: string; stubMode: boolean }> {
   const { client, stub } = await getClient();
 
@@ -87,6 +88,7 @@ export async function loadContext(
         { agent_id: squadId },
         { app_id: "bochechia" },
         ...(runId ? [{ run_id: runId }] : []),
+        ...(projectId ? [{ metadata: { project_id: projectId } }] : []),
       ],
     },
   });
@@ -111,6 +113,7 @@ export async function saveContext(
   squadId: string,
   facts: string,
   runId?: string,
+  projectId?: string,
 ): Promise<{ saved: boolean; stubMode: boolean }> {
   const { client, stub } = await getClient();
 
@@ -121,6 +124,7 @@ export async function saveContext(
     agentId: squadId,
     appId: "bochechia",
     ...(runId ? { runId } : {}),
+    ...(projectId ? { metadata: { project_id: projectId } } : {}),
   });
 
   return { saved: true, stubMode: false };

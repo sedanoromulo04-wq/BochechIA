@@ -118,7 +118,7 @@ export default async function SquadDetailPage({
               {squad.mem0 ? (
                 <>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {squad.mem0.scope.map((item) => (
+                    {(squad.mem0.scope ?? []).map((item) => (
                       <StatusBadge key={item} value={item} />
                     ))}
                   </div>

@@ -3,19 +3,43 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { Run } from "@/types/run";
 import { PATHS } from "@/config/paths";
+import { isSupabaseRuntimeEnabled } from "./db";
+import { ensureFileFromSeed } from "./storage";
+import { readState, writeState } from "./supabase-state";
 
-const RUNS_PATH = path.join(PATHS.runsStore, "runs.json");
+const RUNS_PATH = path.join(PATHS.knowledgeRoot, "runs.json");
+const LEGACY_RUNS_PATH = path.join(PATHS.staticRunsStore, "runs.json");
 
 async function readRuns(): Promise<Run[]> {
+  if (isSupabaseRuntimeEnabled()) {
+    const stateRuns = await readState<Run[]>("runs");
+    if (stateRuns) return stateRuns;
+  }
+
+  await ensureFileFromSeed(RUNS_PATH, LEGACY_RUNS_PATH);
   try {
     const raw = await fs.readFile(RUNS_PATH, "utf8");
     return JSON.parse(raw) as Run[];
   } catch {
-    return [];
+    try {
+      const legacyRaw = await fs.readFile(LEGACY_RUNS_PATH, "utf8");
+      const legacyRuns = JSON.parse(legacyRaw) as Run[];
+      await fs.mkdir(PATHS.knowledgeRoot, { recursive: true });
+      await fs.writeFile(RUNS_PATH, JSON.stringify(legacyRuns, null, 2), "utf8");
+      return legacyRuns;
+    } catch {
+      return [];
+    }
   }
 }
 
 async function writeRuns(runs: Run[]): Promise<void> {
+  if (isSupabaseRuntimeEnabled()) {
+    await writeState("runs", runs);
+    return;
+  }
+
+  await fs.mkdir(PATHS.knowledgeRoot, { recursive: true });
   await fs.writeFile(RUNS_PATH, JSON.stringify(runs, null, 2), "utf8");
 }
 

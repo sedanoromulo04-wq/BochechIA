@@ -1,10 +1,19 @@
 import "server-only";
 import crypto from "node:crypto";
 import type { CreateRunInput, Run, RunStep, ThreadMessage } from "@/types/run";
-import { routeTask, estimateCost, getModelSpec } from "./router";
+import { estimateCost, getModelSpec } from "./router";
 import { callModel } from "./providers";
 import { loadContext, saveContext } from "./mem0";
 import { saveRun, updateRun, getRunById } from "./runs-store";
+import { buildExecutionPlan } from "./policy-engine";
+import { searchKnowledge, summarizeCitations } from "./knowledge-retrieval";
+import {
+  createApprovalRequest,
+  createKnowledgeSource,
+  recordDecision,
+  respondApprovalRequest,
+  updateDecisionRecord,
+} from "./knowledge-store";
 
 function generateRunId(): string {
   const ts = Date.now();
@@ -18,28 +27,28 @@ function now(): string {
 
 // Cria o run no store com status "pending" e retorna o objeto imediatamente.
 export async function createRun(input: CreateRunInput): Promise<Run> {
-  const modelSpec = await routeTask({
-    taskName: input.taskName,
-    squadId: input.squadId,
-    hasClientData: input.hasClientData,
-    critical: input.critical,
-  });
+  const plan = await buildExecutionPlan(input);
 
   const run: Run = {
     id: generateRunId(),
+    workspaceId: input.workspaceId ?? "workspace-operacoes-internas",
     clientId: input.clientId,
+    projectId: input.projectId,
     squadId: input.squadId,
     taskName: input.taskName,
     prompt: input.prompt,
     hasClientData: input.hasClientData,
     critical: input.critical,
     status: "pending",
-    modelId: modelSpec.id,
-    provider: modelSpec.provider,
+    modelId: plan.modelId,
+    provider: plan.provider,
     createdAt: now(),
     steps: [],
     messages: [{ role: "ceo", content: input.prompt, createdAt: now() }],
     parentRunId: input.parentRunId,
+    citations: plan.citations,
+    plan,
+    knowledgeConfidence: plan.knowledgeConfidence,
   };
 
   await saveRun(run);
@@ -57,6 +66,40 @@ export async function executeRun(runId: string): Promise<Run> {
   if (!run) throw new Error(`Run não encontrado: ${runId}`);
 
   try {
+    const plan = run.plan ?? (await buildExecutionPlan({
+      workspaceId: run.workspaceId,
+      clientId: run.clientId,
+      squadId: run.squadId,
+      taskName: run.taskName,
+      prompt: run.prompt,
+      hasClientData: run.hasClientData,
+      critical: run.critical,
+      parentRunId: run.parentRunId,
+    }));
+    const retrieval = await searchKnowledge(run.prompt, {
+      workspaceId: run.workspaceId,
+      clientId: run.clientId,
+      projectId: run.projectId,
+    });
+
+    let decisionId = run.decisionRecordId;
+    if (!decisionId) {
+      const decision = await recordDecision({
+        workspaceId: run.workspaceId,
+        runId,
+        processId: plan.processId,
+        squadId: run.squadId,
+        action: plan.action,
+        rationale: plan.rationale,
+        citations: plan.citations,
+        policyIds: ["policy-privacy-client-data", "policy-approval-critical", "policy-knowledge-confidence"],
+        modelId: plan.modelId,
+        knowledgeConfidence: plan.knowledgeConfidence,
+        status: plan.requiresApproval ? "awaiting_approval" : "planned",
+      });
+      decisionId = decision.id;
+    }
+
     // — Enforcement de privacidade —
     // Se o run tem dados de cliente e o modelo escolhido é Alibaba/Qwen, bloqueia.
     if (run.hasClientData && run.provider === "alibaba") {
@@ -73,15 +116,29 @@ export async function executeRun(runId: string): Promise<Run> {
       run.squadId,
       run.prompt,
       run.id,
+      run.projectId,
     );
 
     await updateRun(runId, { mem0Loaded: true });
 
     // — Construir system prompt —
     const systemLines = [
-      `Você é um agente especializado do squad ${run.squadId} no BochechIA.`,
-      `Tarefa: ${run.taskName}`,
+      `Você é um worker especializado do squad ${run.squadId} no BochechIA.`,
+      `O cérebro central já planejou a execução antes de você responder.`,
+      `Tarefa: ${run.taskName ?? "general-operational-request"}`,
       `Cliente: ${run.clientId}`,
+      `Ação planejada: ${plan.action}`,
+      `Data scope: ${plan.dataScope}`,
+      `Knowledge confidence: ${plan.knowledgeConfidence.toFixed(3)}`,
+      `Ferramentas permitidas: ${plan.allowedTools.join(", ")}`,
+      `Racional do cérebro:`,
+      ...plan.rationale.map((line) => `- ${line}`),
+      "",
+      "Responda sempre ancorado na base disponível. Se o contexto estiver insuficiente, peça clarificação explicitamente.",
+      "Quando usar conhecimento do sistema, cite as fontes no formato [1], [2], [3].",
+      "",
+      "Evidências operacionais:",
+      summarizeCitations(retrieval.citations),
     ];
     if (contextBlock) systemLines.push("", contextBlock);
     const systemPrompt = systemLines.join("\n");
@@ -136,8 +193,20 @@ export async function executeRun(runId: string): Promise<Run> {
     const totalOutputTokens = (run.outputTokens ?? 0) + result.outputTokens;
     const totalCost = (run.costUsd ?? 0) + costUsd;
 
+    let approvalId = run.approvalId;
+    if (plan.requiresApproval && !approvalId && decisionId) {
+      const approval = await createApprovalRequest({
+        workspaceId: run.workspaceId,
+        runId,
+        decisionRecordId: decisionId,
+        status: "pending",
+        requestedBy: "brain-orchestrator",
+      });
+      approvalId = approval.id;
+    }
+
     const updated = await updateRun(runId, {
-      status: "awaiting_approval",
+      status: plan.requiresApproval ? "awaiting_approval" : "approved",
       finishedAt: stepEnd,
       output: result.output,
       inputTokens: totalInputTokens,
@@ -146,7 +215,36 @@ export async function executeRun(runId: string): Promise<Run> {
       steps: [...run.steps, step],
       messages: [...(run.messages ?? []), agentMessage],
       mem0Loaded: !mem0Stub,
+      citations: retrieval.citations,
+      retrieval,
+      plan,
+      decisionRecordId: decisionId,
+      approvalId,
+      knowledgeConfidence: retrieval.confidence,
+      approvedAt: plan.requiresApproval ? undefined : stepEnd,
+      approvedBy: plan.requiresApproval ? undefined : "brain-orchestrator",
     });
+
+    if (decisionId) {
+      await updateDecisionRecord(decisionId, {
+        status: plan.requiresApproval ? "awaiting_approval" : "completed",
+        citations: retrieval.citations,
+        knowledgeConfidence: retrieval.confidence,
+      });
+    }
+
+    if (!plan.requiresApproval && updated?.output) {
+      await createKnowledgeSource({
+        title: `${run.squadId} · ${run.taskName ?? "run"} · output aprovado`,
+        kind: "approved-output",
+        domain: run.taskName ?? run.squadId,
+        tags: [run.squadId, "approved-output"],
+        content: updated.output,
+        uri: `runs/${run.id}`,
+        clientId: run.clientId,
+        projectId: run.projectId,
+      });
+    }
 
     return updated!;
   } catch (err) {
@@ -179,8 +277,32 @@ export async function approveRun(
       run.squadId,
       run.output,
       run.id,
+      run.projectId,
     );
     await updateRun(runId, { mem0Saved: !stubMode });
+
+    await createKnowledgeSource({
+      title: `${run.squadId} · ${run.taskName ?? "run"} · output aprovado`,
+      kind: "approved-output",
+      domain: run.taskName ?? run.squadId,
+      tags: [run.squadId, "approved-output"],
+      content: run.output,
+      uri: `runs/${run.id}`,
+      clientId: run.clientId,
+      projectId: run.projectId,
+    });
+  }
+
+  if (run.approvalId) {
+    await respondApprovalRequest(run.approvalId, {
+      status: "approved",
+      respondedBy: approvedBy,
+    });
+  }
+  if (run.decisionRecordId) {
+    await updateDecisionRecord(run.decisionRecordId, {
+      status: "completed",
+    });
   }
 
   return (await updateRun(runId, {}))!;
@@ -197,6 +319,18 @@ export async function rejectRun(
     rejectionReason: reason,
   });
   if (!run) throw new Error(`Run não encontrado: ${runId}`);
+  if (run.approvalId) {
+    await respondApprovalRequest(run.approvalId, {
+      status: "rejected",
+      respondedBy: "human",
+      reason,
+    });
+  }
+  if (run.decisionRecordId) {
+    await updateDecisionRecord(run.decisionRecordId, {
+      status: "rejected",
+    });
+  }
   return run;
 }
 
@@ -220,6 +354,7 @@ export async function replyRun(
     messages: [...(run.messages ?? []), ceoMessage],
     output: undefined,
     finishedAt: undefined,
+    approvalId: undefined,
   });
 
   // Dispara a execução novamente (assíncrono — quem chama não precisa aguardar).
@@ -248,6 +383,7 @@ export async function dispatchRun(
 
   const child = await createRun({
     clientId: parent.clientId,
+    projectId: parent.projectId,
     squadId: targetSquadId,
     taskName: parent.taskName,
     prompt: fullPrompt,

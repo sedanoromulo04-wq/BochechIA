@@ -7,19 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Users,
-  Activity,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
   Play,
-  Pause,
   Settings,
   MessageSquare,
-  Zap,
-  Brain,
-  Shield
+  Brain
 } from 'lucide-react';
-import { Squad, Agent } from '@/types';
+import { Squad } from '@/types';
 
 interface SquadCardProps {
   squad: Squad;

@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BochechIA OS — AI Operating System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-base:     #040810;
+    --bg-surface:  #080f1e;
+    --bg-card:     #0d1628;
+    --bg-card2:    #111c30;
+    --border:      #1a2a44;
+    --border-glow: #1e3a5f;
+
+    --cyan:        #7cc4fa;
+    --cyan-bright: #38bdf8;
+    --cyan-dim:    #164e73;
+    --green:       #32d583;
+    --green-dim:   #064e3b;
+    --purple:      #a855f7;
+    --purple-dim:  #3b0764;
+    --yellow:      #fbbf24;
+    --yellow-dim:  #451a03;
+    --red:         #f87171;
+    --orange:      #fb923c;
+
+    --text-primary:   #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted:     #4a5568;
+    --text-accent:    #7cc4fa;
+
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  html { font-size: 14px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID NOISE BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(124, 196, 250, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 196, 250, 0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── TOP NAV ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 52px;
+    background: rgba(4, 8, 16, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  .nav-logo-icon {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--cyan);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 0 12px var(--cyan-dim), inset 0 0 8px rgba(124, 196, 250, 0.05);
+    animation: logoGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes logoGlow {
+    0%, 100% { box-shadow: 0 0 12px var(--cyan-dim), inset 0 0 8px rgba(124, 196, 250, 0.05); }
+    50% { box-shadow: 0 0 20px rgba(124, 196, 250, 0.4), inset 0 0 12px rgba(124, 196, 250, 0.1); }
+  }
+
+  .nav-tabs {
+    display: flex; gap: 4px;
+  }
+
+  .nav-tab {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+  }
+
+  .nav-tab:hover {
+    color: var(--text-primary);
+    background: rgba(124, 196, 250, 0.05);
+  }
+
+  .nav-tab.active {
+    color: var(--cyan);
+    background: rgba(124, 196, 250, 0.08);
+    border-color: rgba(124, 196, 250, 0.2);
+  }
+
+  .nav-status {
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .status-dot {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--green);
+  }
+
+  .status-dot::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    padding-top: 52px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section {
+    display: none;
+    min-height: calc(100vh - 52px);
+    padding: 32px 32px 48px;
+    animation: sectionIn 0.3s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes sectionIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    margin-bottom: 28px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+
+  .section-headline {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .section-meta {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-glow-cyan { box-shadow: 0 0 0 1px rgba(124, 196, 250, 0.08), 0 4px 24px rgba(124, 196, 250, 0.04); }
+  .card-glow-green { box-shadow: 0 0 0 1px rgba(50, 213, 131, 0.08), 0 4px 24px rgba(50, 213, 131, 0.04); }
+  .card-glow-purple { box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.08), 0 4px 24px rgba(168, 85, 247, 0.04); }
+
+  /* ═══════════════════════════════════════════
+     SECTION 1 — FLOW MAP
+  ═══════════════════════════════════════════ */
+
+  .flow-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    min-height: 520px;
+  }
+
+  .flow-container::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(124, 196, 250, 0.03) 0%, transparent 70%);
+  }
+
+  .flow-svg {
+    width: 100%;
+    height: 480px;
+  }
+
+  /* Node styles */
+  .flow-node {
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+
+  .flow-node:hover { filter: brightness(1.2); }
+
+  /* Animated path */
+  .flow-path {
+    stroke-dasharray: 8 4;
+    animation: dash 1.5s linear infinite;
+  }
+
+  @keyframes dash {
+    to { stroke-dashoffset: -36; }
+  }
+
+  .flow-path-reverse {
+    stroke-dasharray: 8 4;
+    animation: dashReverse 2s linear infinite;
+  }
+
+  @keyframes dashReverse {
+    to { stroke-dashoffset: 36; }
+  }
+
+  /* Pulse circles on nodes */
+  .node-pulse {
+    animation: nodePulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes nodePulse {
+    0%, 100% { opacity: 0.2; r: 26; }
+    50% { opacity: 0.6; r: 32; }
+  }
+
+  /* Flow stats bar */
+  .flow-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .flow-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .flow-stat-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .flow-stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+  }
+
+  .flow-stat-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 2 — CRM DASHBOARD
+  ═══════════════════════════════════════════ */
+
+  .crm-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+
+  .crm-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .crm-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crm-toolbar-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .crm-count {
+    background: rgba(124, 196, 250, 0.1);
+    color: var(--cyan);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+  }
+
+  .crm-filter-group {
+    display: flex; gap: 6px;
+  }
+
+  .crm-filter {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .crm-filter:hover, .crm-filter.active {
+    color: var(--cyan);
+    border-color: rgba(124, 196, 250, 0.3);
+    background: rgba(124, 196, 250, 0.05);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(26, 42, 68, 0.5);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover {
+    background: rgba(124, 196, 250, 0.03);
+  }
+
+  tbody td {
+    padding: 13px 20px;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .lead-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .lead-name-cell {
+    display: flex; align-items: center;
+  }
+
+  .lead-name { font-weight: 500; color: var(--text-primary); }
+  .lead-email { font-size: 10px; color: var(--text-muted); margin-top: 1px; font-family: var(--font-mono); }
+
+  .company-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .status-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .badge-hot    { color: #f87171; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); }
+  .badge-proposal { color: #a855f7; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); }
+  .badge-replied { color: #34d399; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); }
+  .badge-won    { color: #10b981; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); }
+  .badge-followup { color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2); }
+  .badge-cold   { color: #64748b; background: rgba(100,116,139,0.1); border: 1px solid rgba(100,116,139,0.2); }
+
+  .value-cell {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--green);
+    font-size: 12px;
+  }
+
+  .stage-bar {
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .stage-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+
+  .stage-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+  }
+
+  .stage-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    min-width: 70px;
+  }
+
+  /* CRM Sidebar */
+  .crm-sidebar {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .pipeline-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .pipeline-title {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .pipeline-stage {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .pipeline-stage-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .pipeline-stage-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  .pipeline-stage-value {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .funnel-bar {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+
+  .agent-list-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .agent-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(26, 42, 68, 0.5);
+  }
+
+  .agent-item:last-child { border-bottom: none; }
+
+  .agent-info { display: flex; align-items: center; gap: 8px; }
+
+  .agent-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .agent-name { font-size: 11px; color: var(--text-secondary); }
+
+  .agent-actions {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 3 — LIVE ACTIVITY
+  ═══════════════════════════════════════════ */
+
+  .live-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .metric-card.cyan-top::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+  .metric-card.green-top::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+  .metric-card.purple-top::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+
+  .metric-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .metric-live {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .metric-value {
+    font-size: 34px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .metric-delta {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .delta-up { color: var(--green); }
+  .delta-down { color: var(--red); }
+
+  /* Chart area */
+  .chart-area {
+    height: 60px;
+    margin-top: 16px;
+    position: relative;
+  }
+
+  .chart-svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* Activity section */
+  .activity-split {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 16px;
+  }
+
+  .activity-log {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .activity-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .activity-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .live-indicator {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 9px;
+    color: var(--green);
+    font-family: var(--font-mono);
+  }
+
+  .live-indicator::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 5px var(--green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .activity-list { max-height: 360px; overflow-y: auto; }
+  .activity-list::-webkit-scrollbar { width: 3px; }
+  .activity-list::-webkit-scrollbar-track { background: transparent; }
+  .activity-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .activity-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(26, 42, 68, 0.4);
+    transition: background 0.15s;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .activity-item:hover { background: rgba(124, 196, 250, 0.02); }
+
+  .activity-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .activity-body { flex: 1; min-width: 0; }
+
+  .activity-agent {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .activity-action {
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .activity-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 4px;
+  }
+
+  .activity-status {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-ok    { background: rgba(50,213,131,0.1); color: var(--green); }
+  .status-run   { background: rgba(124,196,250,0.1); color: var(--cyan); }
+  .status-wait  { background: rgba(251,191,36,0.1); color: var(--yellow); }
+  .status-error { background: rgba(248,113,113,0.1); color: var(--red); }
+
+  .activity-time {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Squad performance */
+  .squad-perf {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .squad-perf-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .squad-perf-list { padding: 8px 0; }
+
+  .squad-perf-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(26, 42, 68, 0.3);
+    transition: background 0.15s;
+  }
+
+  .squad-perf-item:last-child { border-bottom: none; }
+  .squad-perf-item:hover { background: rgba(124, 196, 250, 0.02); }
+
+  .squad-perf-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    width: 120px;
+    flex-shrink: 0;
+  }
+
+  .squad-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .squad-fill {
+    height: 100%;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .squad-fill::after {
+    content: '';
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 2px;
+    filter: blur(2px);
+    background: inherit;
+    opacity: 0.8;
+  }
+
+  .squad-pct {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════
+     SECTION 4 — BRAIN MAP
+  ═══════════════════════════════════════════ */
+
+  .brain-container {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    min-height: calc(100vh - 200px);
+  }
+
+  .brain-viz {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .brain-viz::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.05) 0%, rgba(124, 196, 250, 0.02) 40%, transparent 70%);
+  }
+
+  .brain-svg {
+    width: 100%;
+    height: 560px;
+  }
+
+  /* Central core */
+  .core-pulse-ring {
+    animation: corePulse 2s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.15; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.08); }
+  }
+
+  .core-pulse-ring2 {
+    animation: corePulse2 2.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes corePulse2 {
+    0%, 100% { opacity: 0.08; transform: scale(1); }
+    50% { opacity: 0.25; transform: scale(1.15); }
+  }
+
+  /* Orbital lines */
+  .orbit-line {
+    animation: orbitFade 3s ease-in-out infinite;
+    stroke-dasharray: 4 4;
+  }
+
+  @keyframes orbitFade {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Data streams */
+  .data-stream {
+    stroke-dasharray: 6 20;
+    animation: streamFlow 2s linear infinite;
+  }
+
+  @keyframes streamFlow {
+    to { stroke-dashoffset: -52; }
+  }
+
+  /* Brain node labels */
+  .brain-node-label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+  }
+
+  .brain-node-metric {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    fill: var(--text-muted);
+    text-anchor: middle;
+  }
+
+  /* Brain sidebar */
+  .brain-sidebar {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .brain-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .brain-stat-title {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .memory-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(26, 42, 68, 0.4);
+  }
+
+  .memory-item:last-child { border-bottom: none; }
+
+  .memory-icon {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .memory-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .memory-tag {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .knowledge-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .knowledge-bar-left {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .knowledge-bar-right {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+
+  .knowledge-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .knowledge-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  /* ── SCROLLBAR GLOBAL ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── COUNTER ANIMATION ── */
+  .count-up { transition: all 0.5s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .flow-stats { grid-template-columns: repeat(3, 1fr); }
+    .crm-grid { grid-template-columns: 1fr; }
+    .activity-split { grid-template-columns: 1fr; }
+    .brain-container { grid-template-columns: 1fr; }
+    .live-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .section { padding: 20px 16px 40px; }
+    .flow-stats { grid-template-columns: 1fr 1fr; }
+    .live-grid { grid-template-columns: 1fr; }
+    .nav-tabs .nav-tab { padding: 5px 10px; font-size: 10px; }
+  }
+
+  /* ── TOKEN COUNTER TICKER ── */
+  @keyframes ticker {
+    from { transform: translateY(0); }
+    to { transform: translateY(-100%); }
+  }
+
+  .node-status-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">⬡</div>
+    BochechIA OS
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('flow')">Flow Map</button>
+    <button class="nav-tab" onclick="showSection('crm')">CRM</button>
+    <button class="nav-tab" onclick="showSection('live')">Live Activity</button>
+    <button class="nav-tab" onclick="showSection('brain')">Brain Map</button>
+  </div>
+
+  <div class="nav-status">
+    <span class="status-dot">SYSTEM ONLINE</span>
+    <span style="color:var(--text-muted)">|</span>
+    <span id="live-clock" style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">00:00:00</span>
+    <span style="color:var(--text-muted)">|</span>
+    <span style="color:var(--text-muted)">7 SQUADS · 23 AGENTS</span>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════════════════════════════════
+     SECTION 1 — FLOW MAP
+══════════════════════════════════════ -->
+<section id="section-flow" class="section active">
+  <div class="section-header">
+    <div>
+      <div class="section-title">01 / Automation Architecture</div>
+      <div class="section-headline">Agent Flow Map</div>
+    </div>
+    <div class="section-meta">
+      Last sync: <span style="color:var(--cyan)">2s ago</span><br>
+      Nodes active: <span style="color:var(--green)">12 / 14</span><br>
+      Avg latency: <span style="color:var(--yellow)">340ms</span>
+    </div>
+  </div>
+
+  <div class="flow-container card-glow-cyan">
+    <svg class="flow-svg" viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow-cyan">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <filter id="glow-green">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <filter id="glow-purple">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+        <linearGradient id="pathCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7cc4fa" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#a855f7" stop-opacity="0.6"/>
+        </linearGradient>
+        <linearGradient id="pathGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#32d583" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#7cc4fa" stop-opacity="0.5"/>
+        </linearGradient>
+        <linearGradient id="pathPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#a855f7" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.5"/>
+        </linearGradient>
+        <radialGradient id="nodeGradCyan" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#7cc4fa" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0d1628" stop-opacity="0.9"/>
+        </radialGradient>
+        <radialGradient id="nodeGradGreen" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#32d583" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0d1628" stop-opacity="0.9"/>
+        </radialGradient>
+        <radialGradient id="nodeGradPurple" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0d1628" stop-opacity="0.9"/>
+        </radialGradient>
+        <radialGradient id="nodeGradYellow" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0d1628" stop-opacity="0.9"/>
+        </radialGradient>
+        <radialGradient id="nodeGradOrange" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#fb923c" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0d1628" stop-opacity="0.9"/>
+        </radialGradient>
+      </defs>
+
+      <!-- ── Connection lines ── -->
+      <!-- Director → Lead Hunter -->
+      <path d="M 205 200 C 260 200 280 130 335 130" fill="none" stroke="url(#pathCyan)" stroke-width="1.5" class="flow-path"/>
+      <!-- Director → Content Creator -->
+      <path d="M 205 200 C 260 200 280 270 335 270" fill="none" stroke="url(#pathGreen)" stroke-width="1.5" class="flow-path"/>
+      <!-- Director → Reporting -->
+      <path d="M 205 200 C 260 200 280 390 335 390" fill="none" stroke="url(#pathPurple)" stroke-width="1.5" class="flow-path-reverse"/>
+
+      <!-- Lead Hunter → Proposal Builder -->
+      <path d="M 465 130 C 530 130 530 130 595 130" fill="none" stroke="url(#pathCyan)" stroke-width="1.5" class="flow-path"/>
+      <!-- Content Creator → Repurposer -->
+      <path d="M 465 270 C 530 270 530 270 595 270" fill="none" stroke="url(#pathGreen)" stroke-width="1.5" class="flow-path"/>
+
+      <!-- Proposal Builder → Onboarder -->
+      <path d="M 725 130 C 790 130 790 200 855 200" fill="none" stroke="url(#pathCyan)" stroke-width="1.5" class="flow-path"/>
+      <!-- Repurposer → Onboarder -->
+      <path d="M 725 270 C 790 270 790 200 855 200" fill="none" stroke="url(#pathGreen)" stroke-width="1.5" class="flow-path"/>
+
+      <!-- Integrations (right side) -->
+      <!-- HubSpot -->
+      <path d="M 985 200 L 1040 120" fill="none" stroke="#fb923c" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+      <!-- Slack -->
+      <path d="M 985 200 L 1040 170" fill="none" stroke="#4ade80" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+      <!-- Notion -->
+      <path d="M 985 200 L 1040 230" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+      <!-- ClickUp -->
+      <path d="M 985 200 L 1040 280" fill="none" stroke="#f472b6" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+
+      <!-- Reporting dotted to all -->
+      <path d="M 465 390 C 530 390 570 315 660 315" fill="none" stroke="#a855f7" stroke-width="1" stroke-dasharray="3 6" opacity="0.35"/>
+      <path d="M 465 390 C 570 390 600 200 855 200" fill="none" stroke="#a855f7" stroke-width="1" stroke-dasharray="3 6" opacity="0.25"/>
+
+      <!-- ── NODE: Sales Director (center-left) ── -->
+      <g class="flow-node" transform="translate(75, 165)">
+        <circle cx="65" cy="35" r="35" fill="#0d1628" stroke="#7cc4fa" stroke-width="1.5"/>
+        <circle cx="65" cy="35" r="35" fill="url(#nodeGradCyan)" opacity="0.8"/>
+        <circle cx="65" cy="35" r="42" fill="none" stroke="#7cc4fa" stroke-width="0.5" class="node-pulse" opacity="0.3"/>
+        <text x="65" y="28" text-anchor="middle" font-family="var(--font-mono)" font-size="16" fill="#7cc4fa">⬡</text>
+        <text x="65" y="54" text-anchor="middle" font-family="var(--font-sans)" font-size="9" fill="#94a3b8">SALES DIR.</text>
+        <text x="65" y="66" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="#32d583">● ACTIVE</text>
+        <!-- Metrics below node -->
+        <rect x="0" y="85" width="130" height="50" rx="6" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="100" font-family="var(--font-mono)" font-size="8" fill="#4a5568">TOKENS</text>
+        <text x="120" y="100" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#7cc4fa">1.2M</text>
+        <text x="10" y="113" font-family="var(--font-mono)" font-size="8" fill="#4a5568">ACTIONS</text>
+        <text x="120" y="113" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">847</text>
+        <text x="10" y="126" font-family="var(--font-mono)" font-size="8" fill="#4a5568">UPTIME</text>
+        <text x="120" y="126" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#fbbf24">99.8%</text>
+      </g>
+
+      <!-- ── NODE: Lead Hunter ── -->
+      <g class="flow-node" transform="translate(335, 100)">
+        <circle cx="65" cy="30" r="30" fill="#0d1628" stroke="#38bdf8" stroke-width="1.5"/>
+        <circle cx="65" cy="30" r="30" fill="url(#nodeGradCyan)" opacity="0.7"/>
+        <circle cx="65" cy="30" r="38" fill="none" stroke="#38bdf8" stroke-width="0.5" opacity="0.25" class="node-pulse"/>
+        <text x="65" y="24" text-anchor="middle" font-family="var(--font-sans)" font-size="14">🎯</text>
+        <text x="65" y="39" text-anchor="middle" font-family="var(--font-sans)" font-size="8.5" fill="#94a3b8">LEAD HUNTER</text>
+        <rect x="0" y="72" width="130" height="42" rx="5" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="87" font-family="var(--font-mono)" font-size="8" fill="#4a5568">LEADS/DAY</text>
+        <text x="120" y="87" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#38bdf8">34</text>
+        <text x="10" y="100" font-family="var(--font-mono)" font-size="8" fill="#4a5568">CONV. RATE</text>
+        <text x="120" y="100" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">18.4%</text>
+        <text x="10" y="113" font-family="var(--font-mono)" font-size="8" fill="#32d583">● RUNNING</text>
+      </g>
+
+      <!-- ── NODE: Content Creator ── -->
+      <g class="flow-node" transform="translate(335, 240)">
+        <circle cx="65" cy="30" r="30" fill="#0d1628" stroke="#32d583" stroke-width="1.5"/>
+        <circle cx="65" cy="30" r="30" fill="url(#nodeGradGreen)" opacity="0.7"/>
+        <circle cx="65" cy="30" r="38" fill="none" stroke="#32d583" stroke-width="0.5" opacity="0.25" class="node-pulse"/>
+        <text x="65" y="24" text-anchor="middle" font-family="var(--font-sans)" font-size="14">✍️</text>
+        <text x="65" y="39" text-anchor="middle" font-family="var(--font-sans)" font-size="8.5" fill="#94a3b8">CONTENT</text>
+        <rect x="0" y="72" width="130" height="42" rx="5" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="87" font-family="var(--font-mono)" font-size="8" fill="#4a5568">PIECES/WK</text>
+        <text x="120" y="87" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">28</text>
+        <text x="10" y="100" font-family="var(--font-mono)" font-size="8" fill="#4a5568">ENGAGEMENT</text>
+        <text x="120" y="100" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#fbbf24">+41%</text>
+        <text x="10" y="113" font-family="var(--font-mono)" font-size="8" fill="#32d583">● RUNNING</text>
+      </g>
+
+      <!-- ── NODE: Reporting Engine ── -->
+      <g class="flow-node" transform="translate(335, 360)">
+        <circle cx="65" cy="30" r="28" fill="#0d1628" stroke="#a855f7" stroke-width="1.5"/>
+        <circle cx="65" cy="30" r="28" fill="url(#nodeGradPurple)" opacity="0.7"/>
+        <text x="65" y="24" text-anchor="middle" font-family="var(--font-sans)" font-size="14">📊</text>
+        <text x="65" y="38" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="#94a3b8">REPORTING</text>
+        <rect x="0" y="68" width="130" height="42" rx="5" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="83" font-family="var(--font-mono)" font-size="8" fill="#4a5568">REPORTS/WK</text>
+        <text x="120" y="83" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#a855f7">12</text>
+        <text x="10" y="96" font-family="var(--font-mono)" font-size="8" fill="#4a5568">DATA POINTS</text>
+        <text x="120" y="96" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#a855f7">4.2K</text>
+        <text x="10" y="109" font-family="var(--font-mono)" font-size="8" fill="#fbbf24">⏳ COMPILING</text>
+      </g>
+
+      <!-- ── NODE: Proposal Builder ── -->
+      <g class="flow-node" transform="translate(595, 100)">
+        <circle cx="65" cy="30" r="30" fill="#0d1628" stroke="#fbbf24" stroke-width="1.5"/>
+        <circle cx="65" cy="30" r="30" fill="url(#nodeGradYellow)" opacity="0.7"/>
+        <circle cx="65" cy="30" r="38" fill="none" stroke="#fbbf24" stroke-width="0.5" opacity="0.25" class="node-pulse"/>
+        <text x="65" y="24" text-anchor="middle" font-family="var(--font-sans)" font-size="14">📝</text>
+        <text x="65" y="39" text-anchor="middle" font-family="var(--font-sans)" font-size="8.5" fill="#94a3b8">PROPOSALS</text>
+        <rect x="0" y="72" width="130" height="42" rx="5" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="87" font-family="var(--font-mono)" font-size="8" fill="#4a5568">SENT/WK</text>
+        <text x="120" y="87" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#fbbf24">11</text>
+        <text x="10" y="100" font-family="var(--font-mono)" font-size="8" fill="#4a5568">WIN RATE</text>
+        <text x="120" y="100" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">64%</text>
+        <text x="10" y="113" font-family="var(--font-mono)" font-size="8" fill="#32d583">● RUNNING</text>
+      </g>
+
+      <!-- ── NODE: Repurposer ── -->
+      <g class="flow-node" transform="translate(595, 240)">
+        <circle cx="65" cy="30" r="28" fill="#0d1628" stroke="#fb923c" stroke-width="1.5"/>
+        <circle cx="65" cy="30" r="28" fill="url(#nodeGradOrange)" opacity="0.7"/>
+        <text x="65" y="24" text-anchor="middle" font-family="var(--font-sans)" font-size="14">♻️</text>
+        <text x="65" y="38" text-anchor="middle" font-family="var(--font-sans)" font-size="8" fill="#94a3b8">REPURPOSER</text>
+        <rect x="0" y="68" width="130" height="42" rx="5" fill="#080f1e" stroke="#1a2a44" stroke-width="1"/>
+        <text x="10" y="83" font-family="var(--font-mono)" font-size="8" fill="#4a5568">FORMATS</text>
+        <text x="120" y="83" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#fb923c">7</text>
+        <text x="10" y="96" font-family="var(--font-mono)" font-size="8" fill="#4a5568">REACH</text>
+        <text x="120" y="96" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">128K</text>
+        <text x="10" y="109" font-family="var(--font-mono)" font-size="8" fill="#32d583">● ACTIVE</text>
+      </g>
+
+      <!-- ── NODE: Client Onboarder ── -->
+      <g class="flow-node" transform="translate(855, 165)">
+        <circle cx="65" cy="35" r="32" fill="#0d1628" stroke="#32d583" stroke-width="2"/>
+        <circle cx="65" cy="35" r="32" fill="url(#nodeGradGreen)" opacity="0.8"/>
+        <circle cx="65" cy="35" r="42" fill="none" stroke="#32d583" stroke-width="0.8" class="node-pulse" opacity="0.35"/>
+        <circle cx="65" cy="35" r="50" fill="none" stroke="#32d583" stroke-width="0.4" class="core-pulse-ring" opacity="0.2"/>
+        <text x="65" y="28" text-anchor="middle" font-family="var(--font-sans)" font-size="16">🚀</text>
+        <text x="65" y="45" text-anchor="middle" font-family="var(--font-sans)" font-size="8.5" fill="#94a3b8">CLIENT ONBOARDER</text>
+        <text x="65" y="57" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#32d583">● 3 ACTIVE ONBOARDS</text>
+        <rect x="2" y="85" width="126" height="54" rx="6" fill="#080f1e" stroke="#064e3b" stroke-width="1"/>
+        <text x="12" y="100" font-family="var(--font-mono)" font-size="8" fill="#4a5568">CLIENTS/MO</text>
+        <text x="118" y="100" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">14</text>
+        <text x="12" y="113" font-family="var(--font-mono)" font-size="8" fill="#4a5568">REVENUE</text>
+        <text x="118" y="113" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#32d583">$48K</text>
+        <text x="12" y="126" font-family="var(--font-mono)" font-size="8" fill="#4a5568">CHURN RISK</text>
+        <text x="118" y="126" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="#fbbf24">2.1%</text>
+      </g>
+
+      <!-- ── INTEGRATION NODES ── -->
+      <!-- HubSpot -->
+      <g transform="translate(1042, 98)">
+        <rect x="0" y="0" width="52" height="40" rx="6" fill="#080f1e" stroke="#fb923c" stroke-width="1" opacity="0.7"/>
+        <text x="26" y="15" text-anchor="middle" font-family="var(--font-sans)" font-size="11">🔶</text>
+        <text x="26" y="30" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#94a3b8">HubSpot</text>
+      </g>
+      <!-- Slack -->
+      <g transform="translate(1042, 150)">
+        <rect x="0" y="0" width="52" height="40" rx="6" fill="#080f1e" stroke="#4ade80" stroke-width="1" opacity="0.7"/>
+        <text x="26" y="15" text-anchor="middle" font-family="var(--font-sans)" font-size="11">💬</text>
+        <text x="26" y="30" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#94a3b8">Slack</text>
+      </g>
+      <!-- Notion -->
+      <g transform="translate(1042, 210)">
+        <rect x="0" y="0" width="52" height="40" rx="6" fill="#080f1e" stroke="#a78bfa" stroke-width="1" opacity="0.7"/>
+        <text x="26" y="15" text-anchor="middle" font-family="var(--font-sans)" font-size="11">📄</text>
+        <text x="26" y="30" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#94a3b8">Notion</text>
+      </g>
+      <!-- ClickUp -->
+      <g transform="translate(1042, 262)">
+        <rect x="0" y="0" width="52" height="40" rx="6" fill="#080f1e" stroke="#f472b6" stroke-width="1" opacity="0.7"/>
+        <text x="26" y="15" text-anchor="middle" font-family="var(--font-sans)" font-size="11">✅</text>
+        <text x="26" y="30" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#94a3b8">ClickUp</text>
+      </g>
+
+      <!-- Data stream particles on main path -->
+      <circle r="3" fill="#7cc4fa" opacity="0.9" filter="url(#glow-cyan)">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M 205 200 C 260 200 280 130 335 130 C 530 130 530 130 595 130 C 790 130 790 200 855 200"/>
+      </circle>
+      <circle r="3" fill="#32d583" opacity="0.9" filter="url(#glow-green)">
+        <animateMotion dur="3s" repeatCount="indefinite" path="M 205 200 C 260 200 280 270 335 270 C 530 270 530 270 595 270 C 790 270 790 200 855 200"/>
+      </circle>
+      <circle r="2" fill="#a855f7" opacity="0.7" filter="url(#glow-purple)">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M 205 200 C 260 200 280 390 335 390 C 460 390 500 315 600 240"/>
+      </circle>
+    </svg>
+  </div>
+
+  <!-- Flow stats -->
+  <div class="flow-stats">
+    <div class="flow-stat card-glow-cyan">
+      <div class="flow-stat-label">Total Tokens</div>
+      <div class="flow-stat-value" style="color:var(--cyan)">4.7M</div>
+      <div class="flow-stat-sub">↑ +12% this week</div>
+    </div>
+    <div class="flow-stat card-glow-green">
+      <div class="flow-stat-label">Revenue Attributed</div>
+      <div class="flow-stat-value" style="color:var(--green)">$92K</div>
+      <div class="flow-stat-sub">↑ +28% MoM</div>
+    </div>
+    <div class="flow-stat">
+      <div class="flow-stat-label">Active Automations</div>
+      <div class="flow-stat-value" style="color:var(--yellow)">23</div>
+      <div class="flow-stat-sub">2 paused · 0 failed</div>
+    </div>
+    <div class="flow-stat">
+      <div class="flow-stat-label">Avg Response Time</div>
+      <div class="flow-stat-value" style="color:var(--text-primary)">340ms</div>
+      <div class="flow-stat-sub">P95: 1.2s</div>
+    </div>
+    <div class="flow-stat card-glow-purple">
+      <div class="flow-stat-label">Decisions Made</div>
+      <div class="flow-stat-value" style="color:var(--purple)">1,284</div>
+      <div class="flow-stat-sub">98.4% approved</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 2 — CRM
+══════════════════════════════════════ -->
+<section id="section-crm" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">02 / Lead Intelligence</div>
+      <div class="section-headline">CRM Dashboard</div>
+    </div>
+    <div class="section-meta">
+      Pipeline value: <span style="color:var(--green)">$342K</span><br>
+      Leads active: <span style="color:var(--cyan)">28</span><br>
+      Close rate: <span style="color:var(--yellow)">34.2%</span>
+    </div>
+  </div>
+
+  <div class="crm-grid">
+    <!-- Main table -->
+    <div class="crm-table-wrap card-glow-cyan">
+      <div class="crm-toolbar">
+        <div class="crm-toolbar-title">
+          Active Leads
+          <span class="crm-count">28</span>
+        </div>
+        <div class="crm-filter-group">
+          <button class="crm-filter active">All</button>
+          <button class="crm-filter">Hot</button>
+          <button class="crm-filter">Proposal</button>
+          <button class="crm-filter">Won</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Value</th>
+            <th>Funnel Stage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(248,113,113,0.15);color:#f87171">MR</div><div><div class="lead-name">Marcus Reeves</div><div class="lead-email">marcus@nexgenlab.io</div></div></div></td>
+            <td><div class="company-badge">⬛ NexGen Lab</div></td>
+            <td><span class="status-badge badge-hot">Hot</span></td>
+            <td class="value-cell">$24,000</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:85%"></div></div><span class="stage-label">Negotiation</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(168,85,247,0.15);color:#a855f7">SK</div><div><div class="lead-name">Sofia Krauss</div><div class="lead-email">sofia@atrioventures.de</div></div></div></td>
+            <td><div class="company-badge">🔵 Atrio Ventures</div></td>
+            <td><span class="status-badge badge-proposal">Proposal Sent</span></td>
+            <td class="value-cell">$38,500</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:65%"></div></div><span class="stage-label">Decision</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(52,211,153,0.15);color:#34d399">JP</div><div><div class="lead-name">James Park</div><div class="lead-email">j.park@velocitygr.com</div></div></div></td>
+            <td><div class="company-badge">🟢 Velocity Group</div></td>
+            <td><span class="status-badge badge-won">Closed Won</span></td>
+            <td class="value-cell">$15,200</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:100%;background:var(--green)"></div></div><span class="stage-label" style="color:var(--green)">Won ✓</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(251,191,36,0.15);color:#fbbf24">AL</div><div><div class="lead-name">Amanda Lima</div><div class="lead-email">alima@torqbrasil.com</div></div></div></td>
+            <td><div class="company-badge">🟡 Torq Brasil</div></td>
+            <td><span class="status-badge badge-followup">Follow-Up</span></td>
+            <td class="value-cell">$9,800</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:45%"></div></div><span class="stage-label">Nurture</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(124,196,250,0.15);color:#7cc4fa">DW</div><div><div class="lead-name">David Whitmore</div><div class="lead-email">d.whitmore@quantumstk.io</div></div></div></td>
+            <td><div class="company-badge">⚡ Quantum Stack</div></td>
+            <td><span class="status-badge badge-replied">Replied</span></td>
+            <td class="value-cell">$52,000</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:55%"></div></div><span class="stage-label">Discovery</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(100,116,139,0.15);color:#64748b">RM</div><div><div class="lead-name">Rachel Mora</div><div class="lead-email">rachel@coralis.mx</div></div></div></td>
+            <td><div class="company-badge">⬜ Coralis MX</div></td>
+            <td><span class="status-badge badge-cold">Cold</span></td>
+            <td class="value-cell" style="color:var(--text-muted)">$6,400</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:15%;background:#64748b"></div></div><span class="stage-label" style="color:var(--text-muted)">Prospect</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(248,113,113,0.15);color:#f87171">TN</div><div><div class="lead-name">Thomas Novak</div><div class="lead-email">t.novak@bridgelayer.eu</div></div></div></td>
+            <td><div class="company-badge">🔴 BridgeLayer EU</div></td>
+            <td><span class="status-badge badge-hot">Hot</span></td>
+            <td class="value-cell">$31,750</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:78%"></div></div><span class="stage-label">Demo Done</span></div></td>
+          </tr>
+          <tr>
+            <td><div class="lead-name-cell"><div class="lead-avatar" style="background:rgba(168,85,247,0.15);color:#a855f7">YK</div><div><div class="lead-name">Yuki Kawano</div><div class="lead-email">y.kawano@moritech.jp</div></div></div></td>
+            <td><div class="company-badge">🔷 MoriTech JP</div></td>
+            <td><span class="status-badge badge-proposal">Proposal Sent</span></td>
+            <td class="value-cell">$44,200</td>
+            <td><div class="stage-bar"><div class="stage-track"><div class="stage-fill" style="width:68%"></div></div><span class="stage-label">Decision</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="crm-sidebar">
+      <div class="pipeline-card">
+        <div class="pipeline-title">Pipeline Stages</div>
+        <div class="pipeline-stage">
+          <div class="pipeline-stage-name"><div class="pipeline-stage-dot" style="background:#7cc4fa;box-shadow:0 0 5px #7cc4fa"></div>Prospect</div>
+          <div class="pipeline-stage-value">$48K</div>
+        </div>
+        <div class="funnel-bar" style="background:rgba(124,196,250,0.12)"><div style="height:4px;width:100%;border-radius:2px;background:linear-gradient(90deg,#7cc4fa,#a855f7)"></div></div>
+        <div class="pipeline-stage">
+          <div class="pipeline-stage-name"><div class="pipeline-stage-dot" style="background:#fbbf24;box-shadow:0 0 5px #fbbf24"></div>Discovery</div>
+          <div class="pipeline-stage-value">$76K</div>
+        </div>
+        <div class="funnel-bar" style="background:rgba(251,191,36,0.08)"><div style="height:4px;width:82%;border-radius:2px;background:linear-gradient(90deg,#fbbf24,#fb923c)"></div></div>
+        <div class="pipeline-stage">
+          <div class="pipeline-stage-name"><div class="pipeline-stage-dot" style="background:#a855f7;box-shadow:0 0 5px #a855f7"></div>Proposal</div>
+          <div class="pipeline-stage-value">$118K</div>
+        </div>
+        <div class="funnel-bar" style="background:rgba(168,85,247,0.08)"><div style="height:4px;width:65%;border-radius:2px;background:linear-gradient(90deg,#a855f7,#e879f9)"></div></div>
+        <div class="pipeline-stage">
+          <div class="pipeline-stage-name"><div class="pipeline-stage-dot" style="background:#f87171;box-shadow:0 0 5px #f87171"></div>Negotiation</div>
+          <div class="pipeline-stage-value">$68K</div>
+        </div>
+        <div class="funnel-bar" style="background:rgba(248,113,113,0.08)"><div style="height:4px;width:45%;border-radius:2px;background:linear-gradient(90deg,#f87171,#fbbf24)"></div></div>
+        <div class="pipeline-stage">
+          <div class="pipeline-stage-name"><div class="pipeline-stage-dot" style="background:#32d583;box-shadow:0 0 5px #32d583"></div>Closed Won</div>
+          <div class="pipeline-stage-value">$32K</div>
+        </div>
+        <div class="funnel-bar" style="background:rgba(50,213,131,0.1)"><div style="height:4px;width:28%;border-radius:2px;background:var(--green);box-shadow:0 0 8px rgba(50,213,131,0.4)"></div></div>
+      </div>
+
+      <div class="agent-list-card">
+        <div class="pipeline-title">Agents on CRM</div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></div><div class="agent-name">Lead Hunter</div></div>
+          <div class="agent-actions">34 leads/day</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--yellow);box-shadow:0 0 5px var(--yellow)"></div><div class="agent-name">Proposal Builder</div></div>
+          <div class="agent-actions">11 sent/wk</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--cyan);box-shadow:0 0 5px var(--cyan)"></div><div class="agent-name">Follow-Up Bot</div></div>
+          <div class="agent-actions">48 sequences</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></div><div class="agent-name">CRM Enricher</div></div>
+          <div class="agent-actions">128 enriched</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 3 — LIVE ACTIVITY
+══════════════════════════════════════ -->
+<section id="section-live" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">03 / Real-Time Operations</div>
+      <div class="section-headline">Live Agent Activity</div>
+    </div>
+    <div class="section-meta">
+      Session started: <span style="color:var(--cyan)">06h 14m ago</span><br>
+      Total API calls: <span style="color:var(--green)">8,472</span><br>
+      Error rate: <span style="color:var(--green)">0.3%</span>
+    </div>
+  </div>
+
+  <!-- Metric cards -->
+  <div class="live-grid">
+    <div class="metric-card cyan-top">
+      <div class="metric-label"><div class="metric-live"></div>Revenue Generated</div>
+      <div class="metric-value" style="color:var(--green)">$92,840</div>
+      <div class="metric-delta delta-up">↑ +$3,200 today</div>
+      <div class="chart-area">
+        <svg class="chart-svg" viewBox="0 0 220 60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#32d583" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#32d583" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,50 L20,44 L40,48 L60,35 L80,38 L100,25 L120,28 L140,18 L160,22 L180,12 L200,15 L220,8" fill="none" stroke="#32d583" stroke-width="1.5"/>
+          <path d="M0,50 L20,44 L40,48 L60,35 L80,38 L100,25 L120,28 L140,18 L160,22 L180,12 L200,15 L220,8 L220,60 L0,60Z" fill="url(#chartGrad1)"/>
+          <!-- Glow dot at end -->
+          <circle cx="220" cy="8" r="3" fill="#32d583" opacity="0.9"/>
+          <circle cx="220" cy="8" r="6" fill="#32d583" opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="metric-card green-top">
+      <div class="metric-label"><div class="metric-live"></div>Total Leads</div>
+      <div class="metric-value" style="color:var(--cyan)">1,284</div>
+      <div class="metric-delta delta-up">↑ +34 today</div>
+      <div class="chart-area">
+        <svg class="chart-svg" viewBox="0 0 220 60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7cc4fa" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#7cc4fa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,45 L30,42 L60,40 L90,32 L120,28 L150,20 L180,16 L210,10 L220,8" fill="none" stroke="#7cc4fa" stroke-width="1.5"/>
+          <path d="M0,45 L30,42 L60,40 L90,32 L120,28 L150,20 L180,16 L210,10 L220,8 L220,60 L0,60Z" fill="url(#chartGrad2)"/>
+          <circle cx="220" cy="8" r="3" fill="#7cc4fa" opacity="0.9"/>
+          <circle cx="220" cy="8" r="6" fill="#7cc4fa" opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="metric-card purple-top">
+      <div class="metric-label"><div class="metric-live"></div>Agent Performance</div>
+      <div class="metric-value" style="color:var(--purple)">98.4%</div>
+      <div class="metric-delta delta-up">↑ +0.8% vs last week</div>
+      <div class="chart-area">
+        <svg class="chart-svg" viewBox="0 0 220 60" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartGrad3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a855f7" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,30 L20,28 L40,32 L60,22 L80,26 L100,18 L120,14 L140,16 L160,10 L180,12 L200,8 L220,6" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+          <path d="M0,30 L20,28 L40,32 L60,22 L80,26 L100,18 L120,14 L140,16 L160,10 L180,12 L200,8 L220,6 L220,60 L0,60Z" fill="url(#chartGrad3)"/>
+          <circle cx="220" cy="6" r="3" fill="#a855f7" opacity="0.9"/>
+          <circle cx="220" cy="6" r="6" fill="#a855f7" opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity-split">
+    <!-- Activity log -->
+    <div class="activity-log">
+      <div class="activity-header">
+        <div class="activity-title">
+          Agent Log
+          <div class="live-indicator">LIVE</div>
+        </div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted)">auto-refresh 3s</div>
+      </div>
+      <div class="activity-list" id="activity-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- Squad performance -->
+    <div class="squad-perf">
+      <div class="squad-perf-header">Squad Performance</div>
+      <div class="squad-perf-list">
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--cyan)">Copy Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:94%;background:linear-gradient(90deg,#7cc4fa,#38bdf8)"></div></div>
+          <div class="squad-pct" style="color:var(--cyan)">94%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--purple)">Brand Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:88%;background:linear-gradient(90deg,#a855f7,#c084fc)"></div></div>
+          <div class="squad-pct" style="color:var(--purple)">88%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--green)">Hormozi Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:97%;background:linear-gradient(90deg,#32d583,#4ade80)"></div></div>
+          <div class="squad-pct" style="color:var(--green)">97%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--yellow)">Content Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:82%;background:linear-gradient(90deg,#fbbf24,#fb923c)"></div></div>
+          <div class="squad-pct" style="color:var(--yellow)">82%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--orange)">Traffic Masters</div>
+          <div class="squad-track"><div class="squad-fill" style="width:91%;background:linear-gradient(90deg,#fb923c,#f97316)"></div></div>
+          <div class="squad-pct" style="color:var(--orange)">91%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:#e879f9">Data Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:86%;background:linear-gradient(90deg,#e879f9,#a855f7)"></div></div>
+          <div class="squad-pct" style="color:#e879f9">86%</div>
+        </div>
+        <div class="squad-perf-item">
+          <div class="squad-perf-name" style="color:var(--red)">C-Level Squad</div>
+          <div class="squad-track"><div class="squad-fill" style="width:100%;background:linear-gradient(90deg,#f87171,#fb923c)"></div></div>
+          <div class="squad-pct" style="color:var(--red)">100%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 4 — BRAIN MAP
+══════════════════════════════════════ -->
+<section id="section-brain" class="section">
+  <div class="section-header">
+    <div>
+      <div class="section-title">04 / Knowledge Architecture</div>
+      <div class="section-headline">AI Brain Map</div>
+    </div>
+    <div class="section-meta">
+      Knowledge nodes: <span style="color:var(--cyan)">1,847</span><br>
+      Memory entries: <span style="color:var(--purple)">342</span><br>
+      Decisions logged: <span style="color:var(--green)">1,284</span>
+    </div>
+  </div>
+
+  <div class="brain-container">
+    <!-- Neural viz -->
+    <div class="brain-viz">
+      <svg class="brain-svg" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#a855f7" stop-opacity="0.9"/>
+            <stop offset="40%" stop-color="#7cc4fa" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#0d1628" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="coreBg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3b0764" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#0d1628" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="glow-core">
+            <feGaussianBlur stdDeviation="8" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <filter id="glow-node-sm">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <linearGradient id="streamGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#a855f7" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#a855f7" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#7cc4fa" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Ambient glow background -->
+        <circle cx="350" cy="280" r="200" fill="url(#coreBg)" opacity="0.4"/>
+
+        <!-- Orbital rings -->
+        <ellipse cx="350" cy="280" rx="160" ry="80" fill="none" stroke="#1a2a44" stroke-width="0.5" class="orbit-line"/>
+        <ellipse cx="350" cy="280" rx="220" ry="120" fill="none" stroke="#1a2a44" stroke-width="0.5" class="orbit-line" style="animation-delay:1s"/>
+
+        <!-- Connections from center to satellite nodes -->
+        <!-- Content Strategy (top-left) -->
+        <line x1="350" y1="280" x2="140" y2="110" stroke="#a855f7" stroke-width="0.8" opacity="0.4" class="data-stream"/>
+        <!-- Offers & Pricing (top) -->
+        <line x1="350" y1="280" x2="350" y2="80" stroke="#7cc4fa" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:0.5s"/>
+        <!-- Brand Voice (top-right) -->
+        <line x1="350" y1="280" x2="560" y2="110" stroke="#32d583" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:1s"/>
+        <!-- Playbooks (right) -->
+        <line x1="350" y1="280" x2="610" y2="280" stroke="#fbbf24" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:0.3s"/>
+        <!-- Conversion Logic (bottom-right) -->
+        <line x1="350" y1="280" x2="560" y2="450" stroke="#fb923c" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:0.8s"/>
+        <!-- Growth Loops (bottom-left) -->
+        <line x1="350" y1="280" x2="140" y2="450" stroke="#f87171" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:0.2s"/>
+        <!-- Team (left) -->
+        <line x1="350" y1="280" x2="90" y2="280" stroke="#e879f9" stroke-width="0.8" opacity="0.4" class="data-stream" style="animation-delay:1.2s"/>
+
+        <!-- Data particles on paths -->
+        <circle r="2.5" fill="#a855f7" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="2s" repeatCount="indefinite" path="M 350 280 L 140 110"/>
+        </circle>
+        <circle r="2.5" fill="#7cc4fa" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="1.8s" repeatCount="indefinite" path="M 350 280 L 350 80"/>
+        </circle>
+        <circle r="2.5" fill="#32d583" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="2.2s" repeatCount="indefinite" path="M 350 280 L 560 110"/>
+        </circle>
+        <circle r="2.5" fill="#fbbf24" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="1.6s" repeatCount="indefinite" path="M 350 280 L 610 280"/>
+        </circle>
+        <circle r="2.5" fill="#fb923c" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M 350 280 L 560 450"/>
+        </circle>
+        <circle r="2.5" fill="#f87171" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="2.1s" repeatCount="indefinite" path="M 350 280 L 140 450"/>
+        </circle>
+        <circle r="2.5" fill="#e879f9" opacity="0.9" filter="url(#glow-node-sm)">
+          <animateMotion dur="1.9s" repeatCount="indefinite" path="M 350 280 L 90 280"/>
+        </circle>
+
+        <!-- CORE NODE -->
+        <circle cx="350" cy="280" r="58" fill="url(#coreBg)" class="core-pulse-ring2"/>
+        <circle cx="350" cy="280" r="46" fill="url(#coreBg)" class="core-pulse-ring"/>
+        <circle cx="350" cy="280" r="38" fill="#0d1628" stroke="#a855f7" stroke-width="1.5"/>
+        <circle cx="350" cy="280" r="38" fill="url(#coreGrad)" opacity="0.5"/>
+        <text x="350" y="272" text-anchor="middle" font-family="var(--font-sans)" font-size="20">⬡</text>
+        <text x="350" y="290" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="#a855f7">BOCHECHIA</text>
+        <text x="350" y="302" text-anchor="middle" font-family="var(--font-mono)" font-size="7.5" fill="#4a5568">AI BRAIN v2</text>
+
+        <!-- SATELLITE NODES -->
+
+        <!-- Content Strategy (top-left) -->
+        <g transform="translate(95, 80)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#a855f7" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="url(#nodeGradPurple)" opacity="0.6"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">📋</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#a855f7">Content</text>
+          <text x="45" y="52" class="brain-node-label">Strategy</text>
+          <text x="45" y="70" class="brain-node-metric">28 templates</text>
+          <text x="45" y="81" class="brain-node-metric">↑ 41% engage</text>
+        </g>
+
+        <!-- Offers & Pricing (top) -->
+        <g transform="translate(305, 40)">
+          <circle cx="45" cy="30" r="28" fill="#0d1628" stroke="#7cc4fa" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="28" fill="url(#nodeGradCyan)" opacity="0.6"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">💰</text>
+          <text x="45" y="41" class="brain-node-label" style="fill:#7cc4fa">Offers &</text>
+          <text x="45" y="53" class="brain-node-label">Pricing</text>
+          <text x="45" y="72" class="brain-node-metric">14 offers live</text>
+          <text x="45" y="83" class="brain-node-metric">$9.8K avg deal</text>
+        </g>
+
+        <!-- Brand Voice (top-right) -->
+        <g transform="translate(515, 80)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#32d583" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="url(#nodeGradGreen)" opacity="0.6"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">🎙️</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#32d583">Brand</text>
+          <text x="45" y="52" class="brain-node-label">Voice</text>
+          <text x="45" y="70" class="brain-node-metric">4 clients</text>
+          <text x="45" y="81" class="brain-node-metric">92% tone match</text>
+        </g>
+
+        <!-- Playbooks (right) -->
+        <g transform="translate(562, 250)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#fbbf24" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="url(#nodeGradYellow)" opacity="0.6"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">📖</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#fbbf24">Playbooks</text>
+          <text x="45" y="70" class="brain-node-metric">34 active</text>
+          <text x="45" y="81" class="brain-node-metric">7 squads</text>
+        </g>
+
+        <!-- Conversion Logic (bottom-right) -->
+        <g transform="translate(513, 418)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#fb923c" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="url(#nodeGradOrange)" opacity="0.6"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">⚡</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#fb923c">Conversion</text>
+          <text x="45" y="52" class="brain-node-label">Logic</text>
+          <text x="45" y="70" class="brain-node-metric">64% win rate</text>
+          <text x="45" y="81" class="brain-node-metric">18 frameworks</text>
+        </g>
+
+        <!-- Growth Loops (bottom-left) -->
+        <g transform="translate(93, 418)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#f87171" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="rgba(248,113,113,0.15)" opacity="0.8"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">🔄</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#f87171">Growth</text>
+          <text x="45" y="52" class="brain-node-label">Loops</text>
+          <text x="45" y="70" class="brain-node-metric">+28% MoM</text>
+          <text x="45" y="81" class="brain-node-metric">12 loops active</text>
+        </g>
+
+        <!-- Team (left) -->
+        <g transform="translate(44, 250)">
+          <circle cx="45" cy="30" r="26" fill="#0d1628" stroke="#e879f9" stroke-width="1.2"/>
+          <circle cx="45" cy="30" r="26" fill="rgba(232,121,249,0.15)" opacity="0.8"/>
+          <text x="45" y="25" text-anchor="middle" font-size="13">👥</text>
+          <text x="45" y="40" class="brain-node-label" style="fill:#e879f9">Team</text>
+          <text x="45" y="70" class="brain-node-metric">23 agents</text>
+          <text x="45" y="81" class="brain-node-metric">7 squads</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Brain sidebar -->
+    <div class="brain-sidebar">
+      <div class="brain-stat-card">
+        <div class="brain-stat-title">Knowledge Base</div>
+
+        <div class="knowledge-bar">
+          <div class="knowledge-bar-left"><span style="color:var(--purple)">●</span> Brand Foundations</div>
+          <div class="knowledge-bar-right" style="color:var(--purple)">342</div>
+        </div>
+        <div class="knowledge-track"><div class="knowledge-fill" style="width:100%;background:linear-gradient(90deg,#a855f7,#c084fc);box-shadow:0 0 8px rgba(168,85,247,0.3)"></div></div>
+
+        <div class="knowledge-bar">
+          <div class="knowledge-bar-left"><span style="color:var(--cyan)">●</span> Copy Templates</div>
+          <div class="knowledge-bar-right" style="color:var(--cyan)">891</div>
+        </div>
+        <div class="knowledge-track"><div class="knowledge-fill" style="width:87%;background:linear-gradient(90deg,#7cc4fa,#38bdf8);box-shadow:0 0 6px rgba(124,196,250,0.3)"></div></div>
+
+        <div class="knowledge-bar">
+          <div class="knowledge-bar-left"><span style="color:var(--green)">●</span> Decision Records</div>
+          <div class="knowledge-bar-right" style="color:var(--green)">1,284</div>
+        </div>
+        <div class="knowledge-track"><div class="knowledge-fill" style="width:74%;background:linear-gradient(90deg,#32d583,#4ade80);box-shadow:0 0 6px rgba(50,213,131,0.3)"></div></div>
+
+        <div class="knowledge-bar">
+          <div class="knowledge-bar-left"><span style="color:var(--yellow)">●</span> Client Playbooks</div>
+          <div class="knowledge-bar-right" style="color:var(--yellow)">28</div>
+        </div>
+        <div class="knowledge-track"><div class="knowledge-fill" style="width:22%;background:linear-gradient(90deg,#fbbf24,#fb923c);box-shadow:0 0 6px rgba(251,191,36,0.3)"></div></div>
+      </div>
+
+      <div class="brain-stat-card">
+        <div class="brain-stat-title">Recent Memory (Mem0)</div>
+
+        <div class="memory-item">
+          <div class="memory-icon" style="background:rgba(124,196,250,0.1);color:var(--cyan)">💡</div>
+          <div>
+            <div class="memory-text">cliente-torq prefere copy direto sem rodeios, tom autoritário</div>
+            <div class="memory-tag">copy-squad · 2h ago</div>
+          </div>
+        </div>
+        <div class="memory-item">
+          <div class="memory-icon" style="background:rgba(50,213,131,0.1);color:var(--green)">✅</div>
+          <div>
+            <div class="memory-text">Headline "Você não contrata uma agência..." aprovada — CVR +18%</div>
+            <div class="memory-tag">brand-squad · 4h ago</div>
+          </div>
+        </div>
+        <div class="memory-item">
+          <div class="memory-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)">🎯</div>
+          <div>
+            <div class="memory-text">Persona ICP: CEO 35-52, empresa 10-80 funcionários, dor em escalabilidade</div>
+            <div class="memory-tag">hormozi-squad · 6h ago</div>
+          </div>
+        </div>
+        <div class="memory-item">
+          <div class="memory-icon" style="background:rgba(251,191,36,0.1);color:var(--yellow)">⚠️</div>
+          <div>
+            <div class="memory-text">Oferta R$4.800 rejeitada — percepção de valor baixo, reformular</div>
+            <div class="memory-tag">c-level-squad · 1d ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brain-stat-card">
+        <div class="brain-stat-title">System Status</div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></div><div class="agent-name">Mem0 Memory Layer</div></div>
+          <div class="agent-actions" style="color:var(--green)">ACTIVE</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--green);box-shadow:0 0 5px var(--green)"></div><div class="agent-name">Policy Engine</div></div>
+          <div class="agent-actions" style="color:var(--green)">ACTIVE</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--yellow);box-shadow:0 0 5px var(--yellow)"></div><div class="agent-name">Knowledge Store</div></div>
+          <div class="agent-actions" style="color:var(--yellow)">JSON (dev)</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--cyan);box-shadow:0 0 5px var(--cyan)"></div><div class="agent-name">Model Router</div></div>
+          <div class="agent-actions" style="color:var(--cyan)">v1.1.0</div>
+        </div>
+        <div class="agent-item">
+          <div class="agent-info"><div class="agent-dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></div><div class="agent-name">Supabase</div></div>
+          <div class="agent-actions" style="color:var(--text-muted)">Phase 2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // ── Navigation ──
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // ── Live clock ──
+  function updateClock() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('live-clock').textContent =
+      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Activity log data ──
+  const agents = [
+    { name: 'Lead Hunter', icon: '🎯', color: '#7cc4fa', bg: 'rgba(124,196,250,0.1)' },
+    { name: 'Copy Agent #7', icon: '✍️', color: '#32d583', bg: 'rgba(50,213,131,0.1)' },
+    { name: 'Brand Director', icon: '🎙️', color: '#a855f7', bg: 'rgba(168,85,247,0.1)' },
+    { name: 'Hormozi Bot', icon: '💰', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)' },
+    { name: 'Content Creator', icon: '📝', color: '#fb923c', bg: 'rgba(251,146,60,0.1)' },
+    { name: 'Traffic Master', icon: '📊', color: '#e879f9', bg: 'rgba(232,121,249,0.1)' },
+    { name: 'Reporting Engine', icon: '📈', color: '#38bdf8', bg: 'rgba(56,189,248,0.1)' },
+  ];
+
+  const actions = [
+    'Generated cold outreach sequence for 12 leads',
+    'Wrote VSL script — Hormozi framework applied',
+    'Brand tone analysis complete for cliente-torq',
+    'Revenue optimization: offer restructure complete',
+    'Published 3 LinkedIn posts — 2.4K impressions',
+    'A/B tested 2 subject lines — winner: +34% OR',
+    'Lead enriched: Marcus Reeves / NexGen Lab',
+    'Decision logged: Proposal approved $24K',
+    'Mem0 context loaded for copy-squad session',
+    'Content repurposed: 1 post → 7 formats',
+    'Funnel audit complete — 3 leaks identified',
+    'Follow-up sequence triggered for 8 leads',
+  ];
+
+  const statuses = ['ok', 'run', 'ok', 'ok', 'wait', 'run', 'ok'];
+  const statusLabels = { ok: 'DONE', run: 'RUNNING', wait: 'WAITING', error: 'ERROR' };
+
+  function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function timeAgo() {
+    const mins = Math.floor(Math.random() * 8);
+    const secs = Math.floor(Math.random() * 59);
+    if (mins === 0) return secs + 's ago';
+    return mins + 'm ' + secs + 's ago';
+  }
+
+  function addActivityItem() {
+    const list = document.getElementById('activity-list');
+    if (!list) return;
+    const agent = randomItem(agents);
+    const action = randomItem(actions);
+    const status = randomItem(statuses);
+
+    const item = document.createElement('div');
+    item.className = 'activity-item';
+    item.innerHTML = `
+      <div class="activity-icon" style="background:${agent.bg};color:${agent.color}">${agent.icon}</div>
+      <div class="activity-body">
+        <div class="activity-agent" style="color:${agent.color}">${agent.name}</div>
+        <div class="activity-action">${action}</div>
+        <div class="activity-meta">
+          <span class="activity-status status-${status}">${statusLabels[status]}</span>
+          <span class="activity-time">${timeAgo()}</span>
+        </div>
+      </div>
+    `;
+    list.insertBefore(item, list.firstChild);
+    // Keep max 20 items
+    while (list.children.length > 20) list.removeChild(list.lastChild);
+  }
+
+  // Seed initial activity
+  for (let i = 0; i < 12; i++) addActivityItem();
+
+  // Live feed: add new item every 3-5s
+  function scheduleNext() {
+    setTimeout(() => {
+      addActivityItem();
+      scheduleNext();
+    }, 3000 + Math.random() * 2000);
+  }
+  scheduleNext();
+
+  // ── CRM filter buttons ──
+  document.querySelectorAll('.crm-filter').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.crm-filter').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

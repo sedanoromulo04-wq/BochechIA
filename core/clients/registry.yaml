@@ -1,52 +1,90 @@
-# Schema de registro de clientes do BochechIA
-# Arquivo: core/clients/registry.yaml
-# NUNCA commitar dados reais aqui — use variáveis de ambiente ou .env.local
-
-version: "1.0.0"
-
-# Exemplo de estrutura. Dados reais ficam fora do Git.
+version: 1.0.0
 clients:
   - id: cliente-torq
-    name: "Romulo"                        # nome interno
-    company: "Torq"
-    niche: "Marketing Digital"            # ex: saúde, educação, infoprodutos
-    status: active                       # active | paused | completed
-    mem0_user_id: cliente-torq           # deve bater com o user_id no Mem0
-    squads_active:                       # quais squads estão ativos para este cliente
+    name: Romulo
+    company: Torq
+    niche: Marketing Digital
+    status: active
+    mem0_user_id: cliente-torq
+    squads_active:
       - traffic-masters
       - copy-squad
       - brand-squad
-    primary_contact: "romulo@torq.com"
+    primary_contact: romulo@torq.com
     start_date: "2025-01-15"
     projects:
       - id: projeto-001
-        name: "Campanha LinkedIn Tráfego"
+        name: Campanha LinkedIn Tráfego
         squad: traffic-masters
-        status: active                # pending | active | review | completed
+        status: active
       - id: projeto-002
-        name: "Brand Foundation"
+        name: Brand Foundation
         squad: brand-squad
         status: active
-  
   - id: cliente-abc
-    name: "Cliente ABC"
-    company: "ABC Consulting"
-    niche: "Consultoria Empresarial"
+    name: Cliente ABC
+    company: ABC Consulting
+    niche: Consultoria Empresarial
     status: active
     mem0_user_id: cliente-abc
     squads_active:
       - copy-squad
       - hormozi-squad
-    primary_contact: "contato@abc.com"
+    primary_contact: contato@abc.com
     start_date: "2025-02-01"
     projects:
       - id: projeto-003
-        name: "Funil de Vendas"
+        name: Funil de Vendas
         squad: copy-squad
         status: active
-
-# Como criar um novo cliente:
-# 1. Adicionar entrada neste arquivo (sem dados sensíveis)
-# 2. Criar escopo no Mem0: user_id=<client-id>
-# 3. Adicionar .env.local com dados privados se necessário
-# 4. O dashboard lerá este arquivo para listar clientes
+  - id: cliente-empresa-teste
+    name: Test
+    company: Empresa Teste
+    niche: SaaS
+    status: active
+    mem0_user_id: cliente-empresa-teste
+    squads_active:
+      - copy-squad
+      - brand-squad
+    primary_contact: ""
+    start_date: "2026-04-28"
+    projects:
+      - id: proj-campanha-q2-moj96u9a
+        name: Campanha Q2
+        description: Campanha de lancamento do produto X
+        objective: Gerar 100 leads qualificados
+        squad: copy-squad
+        status: active
+        tags:
+          - copy
+          - lancamento
+          - email
+        createdAt: "2026-04-28T23:24:39.214Z"
+  - id: cliente-lara-designer
+    name: Lara Salles
+    company: Lara Designer
+    niche: Design de Estampas
+    status: active
+    mem0_user_id: cliente-lara-designer
+    squads_active:
+      - brand-squad
+      - content-squad
+      - copy-squad
+    primary_contact: ""
+    start_date: "2026-04-30"
+    projects:
+      - id: proj-autoridade-instagram-linkedin-lara
+        name: Autoridade no Instagram e LinkedIn
+        description: Estrutura inicial de posicionamento, autoridade e conteudo para Lara Designer.
+        objective: >-
+          Construir presenca de autoridade no Instagram e no LinkedIn para atrair oportunidades, fortalecer
+          posicionamento e transformar repertorio criativo em demanda comercial.
+        squad: content-squad
+        status: active
+        tags:
+          - autoridade
+          - instagram
+          - linkedin
+          - branding-pessoal
+          - estamparia
+        createdAt: "2026-04-30T17:57:57.649Z"

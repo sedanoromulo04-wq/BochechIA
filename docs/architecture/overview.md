@@ -2,84 +2,116 @@
 
 ## Visão geral
 
-O BochechIA é composto por 4 camadas que se empilham:
+O BochechIA deixou de ser centrado em `runs + squads + memória auxiliar` e passou a ser centrado em um **cérebro estruturado**:
 
 ```
-┌──────────────────────────────────────────┐
-│  1. VOCÊ — fundador / CEO humano          │
-│     Dashboard Next.js para visibilidade   │
-├──────────────────────────────────────────┤
-│  2. ROTEADOR — decide qual modelo usar    │
-│     core/routing/model-routing.yaml       │
-├──────────────────────────────────────────┤
-│  3. SQUADS — times especializados         │
-│     Cada squad = squad.yaml + agentes     │
-├──────────────────────────────────────────┤
-│  4. MEM0 — memória por cliente            │
-│     Elimina re-leitura de contexto        │
-└──────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│  1. CONTROL PLANE                           │
+│     Dashboard: knowledge, decisions, evals  │
+├──────────────────────────────────────────────┤
+│  2. POLICY / ORCHESTRATION ENGINE           │
+│     Planeja ação, risco, modelo e approvals │
+├──────────────────────────────────────────────┤
+│  3. KNOWLEDGE LAYER                         │
+│     fontes, versões, chunks, facts, policy  │
+├──────────────────────────────────────────────┤
+│  4. WORKERS                                 │
+│     squads especializados executam planos   │
+├──────────────────────────────────────────────┤
+│  5. AUXILIARY MEMORY                        │
+│     Mem0 subordinado ao knowledge layer     │
+└──────────────────────────────────────────────┘
 ```
 
-## Estado atual da implementação
+## Implementação atual
 
-- A estrutura local canônica está dentro de `bochechia/`
-- O dashboard já compila em `dashboard/` com Next.js 16.2.4
-- O dashboard já executa runs reais (Etapa 4 concluída em 2026-04-26):
-  - `squads/*/squad.yaml` — manifests dos squads
-  - `core/clients/registry.yaml` — registry de clientes (JSON local, MVP)
-  - `core/routing/model-routing.yaml` — roteamento de modelos
-  - `core/runs/runs.json` — store persistente de runs
-- Providers ativos: Anthropic (Sonnet/Opus) + Alibaba/Qwen (flash/pro)
-- Mem0 integrado com stub mode (opera sem chave em dev)
+### Fonte da verdade em desenvolvimento
 
-## OS Layers
+- `core/knowledge/brain-store.json`
+- `core/knowledge/runs.json`
 
-| Layer | Squads | Função |
-|-------|--------|--------|
-| Strategy OS | c-level-squad, brand-squad | Posicionamento, decisões críticas |
-| Conversion OS | copy-squad, hormozi-squad | Copy, ofertas, vendas |
-| Content OS | content-squad | Storytelling, conteúdo, movimento |
-| Distribution OS | traffic-masters | Tráfego, distribuição, ads |
-| Data OS | data-squad | Análise, relatórios, métricas |
-| Memory OS | Mem0 (infra) | Persiste contexto entre sessões |
+### Fonte canônica planejada para produção
 
-## Fluxo de um cliente real
+- Supabase Postgres
+- `pgvector`
+- Supabase Storage
+- migration em `supabase/migrations/20260428_knowledge_first_brain.sql`
 
-```
-1. Você registra o cliente (core/clients/registry.yaml)
-2. Mem0 cria o escopo user_id=cliente
-3. brand-squad → diagnóstico + brand foundation
-4. copy-squad → copy com a persona certa para o nicho
-5. content-squad → posts, hooks, stories com identidade visual
-6. traffic-masters → estratégia de distribuição
-7. Você aprova cada etapa no dashboard
-8. Mem0 salva o que funcionou para o próximo ciclo
-```
+## Componentes principais
 
-## Decisões arquiteturais
+### Knowledge foundation
 
-### Por que Alibaba/Qwen para tarefas simples?
-Custo: `qwen3.5-flash` custa $0,03/M tokens de input vs $3,00/M do Sonnet.
-Performance equivalente para tarefas estruturadas (headlines, bullets, formatação).
-DeepSeek foi removido em 2026-04-26 — Qwen substituiu com a mesma SDK OpenAI-compat.
-Ver `core/routing/model-routing.yaml` para custos atualizados.
+- `dashboard/src/lib/knowledge-store.ts`
+- `dashboard/src/lib/knowledge-text.ts`
+- `dashboard/src/lib/knowledge-retrieval.ts`
 
-### Por que Mem0 e não full-context?
-Full-context: ~26.000 tokens por sessão.
-Mem0: ~1.764 tokens por sessão.
-Economia de ~90% em tokens mantendo qualidade equivalente.
-Ver `docs/architecture/memory-schema.md` para schema.
+Responsabilidades:
 
-### Por que Next.js e não React puro?
-App Router do Next.js elimina boilerplate de roteamento.
-API Routes para integração futura com Supabase.
-Deploy direto no Vercel sem configuração adicional.
+- seed inicial da base
+- ingestão de fontes
+- versionamento de documentos
+- chunking
+- extração de fatos
+- retrieval com citações
 
-### Por que Next.js 16 e não 14?
-O scaffold real do projeto foi feito em 2026-04-25 com Next.js 16.2.4 e Tailwind CSS 4.
-O código e o build atuais devem seguir essa realidade, mesmo se documentos antigos mencionarem Next 14.
+### Policy engine
 
-### Por que squad.yaml como fonte da verdade?
-O dashboard lê os squad.yaml para montar o org chart automaticamente.
-Nenhuma configuração duplicada — o YAML é a única fonte.
-Adicionar um novo squad = criar a pasta e o YAML.
+- `dashboard/src/lib/policy-engine.ts`
+- `dashboard/src/lib/router.ts`
+
+Responsabilidades:
+
+- decidir modelo
+- decidir approval
+- decidir ação (`clarify`, `execute`, `answer`, `escalate`)
+- impor privacidade e confidence gating
+
+### Orchestration runtime
+
+- `dashboard/src/lib/engine.ts`
+- `dashboard/src/lib/runs-store.ts`
+- `dashboard/src/lib/providers.ts`
+- `dashboard/src/lib/mem0.ts`
+
+Responsabilidades:
+
+- criar run
+- consultar knowledge + policy
+- executar worker
+- registrar decision record
+- abrir approval request
+- salvar output aprovado como nova fonte de conhecimento
+
+## Retrieval híbrido v1
+
+1. lexical + metadata filtering
+2. embedding local por hash vetorial
+3. fatos estruturados e policies aprovadas
+
+Toda execução relevante deve carregar:
+
+- confiança de conhecimento
+- citações
+- rationale
+- policies aplicadas
+
+## Dashboard
+
+O cockpit agora reflete o cérebro:
+
+- `/dashboard`
+- `/dashboard/knowledge`
+- `/dashboard/processes`
+- `/dashboard/decisions`
+- `/dashboard/approvals`
+- `/dashboard/runs`
+- `/dashboard/connectors`
+- `/dashboard/evals`
+
+## Próxima fase natural
+
+1. trocar store local por adapter Supabase
+2. adicionar embeddings reais
+3. incluir conectores externos
+4. subir evals operacionais
+5. preparar relações/GraphRAG para fase 2

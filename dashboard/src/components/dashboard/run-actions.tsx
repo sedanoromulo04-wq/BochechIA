@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Run, ThreadMessage } from "@/types/run";
 
-// ─── Polling automático ───────────────────────────────────────────────────────
 export function RunPoller({ activeIds }: { activeIds: string[] }) {
   const router = useRouter();
   const seen = useRef<Set<string>>(new Set());
@@ -18,9 +17,14 @@ export function RunPoller({ activeIds }: { activeIds: string[] }) {
           const res = await fetch(`/api/runs/${id}`);
           const run: Run = await res.json();
           if (run.status !== "pending" && run.status !== "running") {
-            if (!seen.current.has(id)) { seen.current.add(id); changed = true; }
+            if (!seen.current.has(id)) {
+              seen.current.add(id);
+              changed = true;
+            }
           }
-        } catch { /* silencia erros temporários */ }
+        } catch {
+          // ignora erros temporários de rede/polling
+        }
       }
       if (changed) router.refresh();
     }, 3000);
@@ -30,7 +34,6 @@ export function RunPoller({ activeIds }: { activeIds: string[] }) {
   return null;
 }
 
-// ─── Thread de conversa CEO ↔ Agente ─────────────────────────────────────────
 function MessageBubble({ msg }: { msg: ThreadMessage }) {
   const isCeo = msg.role === "ceo";
   return (
@@ -39,11 +42,13 @@ function MessageBubble({ msg }: { msg: ThreadMessage }) {
         {isCeo ? "Você" : "Agente"}
         {msg.modelId && !isCeo && ` · ${msg.modelId}`}
       </span>
-      <div className={`max-w-[90%] border p-4 text-sm leading-6 whitespace-pre-wrap ${
-        isCeo
-          ? "border-[var(--accent)] bg-[color:color-mix(in_srgb,var(--accent)_6%,transparent)] text-foreground"
-          : "border-[var(--border)] bg-[var(--surface-subtle)] text-foreground"
-      }`}>
+      <div
+        className={`max-w-[90%] border p-4 text-sm leading-6 whitespace-pre-wrap ${
+          isCeo
+            ? "border-[var(--accent)] bg-[color:color-mix(in_srgb,var(--accent)_6%,transparent)] text-foreground"
+            : "border-[var(--border)] bg-[var(--surface-subtle)] text-foreground"
+        }`}
+      >
         {msg.content}
       </div>
       {msg.costUsd !== undefined && (
@@ -55,17 +60,32 @@ function MessageBubble({ msg }: { msg: ThreadMessage }) {
 
 export function ConversationThread({ messages }: { messages: ThreadMessage[] }) {
   if (!messages || messages.length === 0) return null;
+
+  const latestMessage = messages[messages.length - 1];
+  const olderMessages = messages.slice(0, -1);
+
   return (
     <div className="space-y-4">
-      <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Conversa</p>
-      <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-        {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Última interação</p>
+        <MessageBubble msg={latestMessage} />
       </div>
+      {olderMessages.length > 0 && (
+        <details className="border border-[var(--border)] bg-[var(--surface-subtle)]">
+          <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-[var(--muted)]">
+            Ver histórico da conversa ({olderMessages.length})
+          </summary>
+          <div className="space-y-3 border-t border-[var(--border)] p-4 max-h-80 overflow-y-auto">
+            {olderMessages.map((msg, i) => (
+              <MessageBubble key={i} msg={msg} />
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   );
 }
 
-// ─── Painel de ações do CEO ───────────────────────────────────────────────────
 export function CeoActions({
   runId,
   squadOptions,
@@ -90,14 +110,14 @@ export function CeoActions({
         body: JSON.stringify({ action, approvedBy: "ceo", ...extra }),
       });
       if (!res.ok) {
-        const d = await res.json();
-        throw new Error(d.error ?? "Erro");
+        const data = await res.json();
+        throw new Error(data.error ?? "Erro");
       }
       setText("");
       setMode("idle");
       router.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erro desconhecido");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
@@ -159,7 +179,10 @@ export function CeoActions({
             >
               {loading ? "Enviando..." : "Enviar resposta →"}
             </button>
-            <button onClick={() => setMode("idle")} className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition">
+            <button
+              onClick={() => setMode("idle")}
+              className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition"
+            >
               Cancelar
             </button>
           </div>
@@ -177,14 +200,16 @@ export function CeoActions({
             className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]"
           >
             {squadOptions.map((s) => (
-              <option key={s.id} value={s.id}>{s.label}</option>
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
             ))}
           </select>
           <textarea
             rows={2}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Instrução para o próximo squad (opcional) — ex: use o posicionamento acima para criar 5 headlines"
+            placeholder="Instrução para o próximo squad (opcional)."
             className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] resize-none"
           />
           <div className="flex gap-2">
@@ -195,7 +220,10 @@ export function CeoActions({
             >
               {loading ? "Despachando..." : `Despachar para ${targetSquad} →`}
             </button>
-            <button onClick={() => setMode("idle")} className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition">
+            <button
+              onClick={() => setMode("idle")}
+              className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition"
+            >
               Cancelar
             </button>
           </div>
@@ -220,7 +248,10 @@ export function CeoActions({
             >
               {loading ? "Rejeitando..." : "Confirmar rejeição"}
             </button>
-            <button onClick={() => setMode("idle")} className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition">
+            <button
+              onClick={() => setMode("idle")}
+              className="px-4 py-2 text-sm border border-[var(--border)] text-[var(--muted)] hover:border-[var(--accent)] transition"
+            >
               Cancelar
             </button>
           </div>
@@ -230,53 +261,66 @@ export function CeoActions({
   );
 }
 
-// ─── Formulário de nova demanda ───────────────────────────────────────────────
 const SQUAD_LABELS: Record<string, string> = {
-  "copy-squad":      "Copywriting",
-  "brand-squad":     "Marca & Posicionamento",
-  "hormozi-squad":   "Ofertas & Crescimento",
-  "content-squad":   "Conteúdo & Storytelling",
+  "copy-squad": "Copywriting",
+  "brand-squad": "Marca & Posicionamento",
+  "hormozi-squad": "Ofertas & Crescimento",
+  "content-squad": "Conteúdo & Storytelling",
   "traffic-masters": "Tráfego & Distribuição",
-  "data-squad":      "Dados & Relatórios",
-  "c-level-squad":   "Estratégia C-Level",
+  "data-squad": "Dados & Relatórios",
+  "c-level-squad": "Estratégia C-Level",
 };
 
 const TASK_LABELS: Record<string, string> = {
-  "write-headline":       "Escrever headlines",
-  "write-bullets":        "Escrever bullets de benefícios",
-  "write-sales-letter":   "Escrever carta de vendas",
-  "write-vsl-script":     "Escrever roteiro de VSL",
+  "write-headline": "Escrever headlines",
+  "write-bullets": "Escrever bullets de benefícios",
+  "write-sales-letter": "Escrever carta de vendas",
+  "write-vsl-script": "Escrever roteiro de VSL",
   "write-email-sequence": "Criar sequência de email",
-  "write-ad-copy":        "Escrever copy de anúncio",
-  "write-landing-page":   "Escrever landing page",
-  "create-offer":         "Criar oferta",
-  "create-positioning":   "Criar posicionamento",
-  "create-brand-story":   "Criar história de marca",
-  "audit-brand":          "Auditar marca",
-  "analyze-data":         "Analisar dados",
-  "create-hooks":         "Criar hooks",
-  "create-funnel-copy":   "Escrever copy de funil",
-  "build-movement":       "Construir movimento de marca",
-  "set-vision":           "Definir visão estratégica",
-  "write-manifesto":      "Escrever manifesto",
-  "diagnose":             "Fazer diagnóstico",
-  "review":               "Revisar material",
-  "analyze-copy":         "Analisar copy existente",
+  "write-ad-copy": "Escrever copy de anúncio",
+  "write-landing-page": "Escrever landing page",
+  "create-offer": "Criar oferta",
+  "create-positioning": "Criar posicionamento",
+  "create-brand-story": "Criar história de marca",
+  "audit-brand": "Auditar marca",
+  "analyze-data": "Analisar dados",
+  "create-hooks": "Criar hooks",
+  "create-funnel-copy": "Escrever copy de funil",
+  "build-movement": "Construir movimento de marca",
+  "set-vision": "Definir visão estratégica",
+  "write-manifesto": "Escrever manifesto",
+  diagnose: "Fazer diagnóstico",
+  review: "Revisar material",
+  "analyze-copy": "Analisar copy existente",
 };
 
-export function NewDemandForm({ clients, squads, tasks }: {
-  clients: Array<{ id: string; company: string }>;
+export function NewDemandForm({
+  clients,
+  squads,
+  tasks,
+  defaultClientId,
+  defaultProjectId,
+  defaultSquadId,
+}: {
+  clients: Array<{ id: string; company: string; projects?: Array<{ id: string; name: string }> }>;
   squads: Array<{ id: string; short_title: string }>;
   tasks: Array<{ slug: string; title: string; squadId: string }>;
+  defaultClientId?: string;
+  defaultProjectId?: string;
+  defaultSquadId?: string;
 }) {
   const router = useRouter();
-  const [clientId, setClientId] = useState(clients[0]?.id ?? "");
-  const [squadId, setSquadId] = useState("");
+  const [clientId, setClientId] = useState(defaultClientId ?? clients[0]?.id ?? "");
+  const [projectId, setProjectId] = useState(defaultProjectId ?? "");
+  const [squadId, setSquadId] = useState(defaultSquadId ?? "");
   const [taskName, setTaskName] = useState("");
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+
+  const selectedClient = clients.find((c) => c.id === clientId);
+  const projectOptions = selectedClient?.projects ?? [];
 
   const squadsForDisplay = squads.map((s) => ({
     ...s,
@@ -299,6 +343,7 @@ export function NewDemandForm({ clients, squads, tasks }: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientId,
+          projectId: projectId || undefined,
           squadId: squadId || squads[0]?.id,
           taskName: taskName || undefined,
           prompt,
@@ -307,7 +352,7 @@ export function NewDemandForm({ clients, squads, tasks }: {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Erro ao criar demanda");
+        throw new Error(data.error ?? "Erro ao criar run");
       }
       setPrompt("");
       setTaskName("");
@@ -326,7 +371,7 @@ export function NewDemandForm({ clients, squads, tasks }: {
       <div>
         <h3 className="text-lg font-semibold">Nova demanda</h3>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Descreva o que você precisa. O sistema escolhe o modelo certo automaticamente.
+          O cérebro consulta a base, monta um plano e despacha a execução para o worker adequado.
         </p>
       </div>
 
@@ -337,58 +382,86 @@ export function NewDemandForm({ clients, squads, tasks }: {
       )}
       {sent && (
         <div className="border border-[var(--success)] bg-[color:color-mix(in_srgb,var(--success)_8%,transparent)] px-4 py-3">
-          <p className="text-sm text-[var(--success)]">Demanda enviada — o agente já está trabalhando.</p>
+          <p className="text-sm text-[var(--success)]">Run criado — o cérebro já iniciou o fluxo.</p>
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Cliente</label>
           <select
             value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
+            onChange={(e) => { setClientId(e.target.value); setProjectId(""); }}
             className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]"
           >
-            {clients.map((c) => <option key={c.id} value={c.id}>{c.company}</option>)}
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.company}
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Equipe</label>
+          <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Projeto</label>
+          <select
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+            className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]"
+          >
+            <option value="">— sem projeto específico —</option>
+            {projectOptions.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Worker</label>
           <select
             value={squadId}
-            onChange={(e) => { setSquadId(e.target.value); setTaskName(""); }}
+            onChange={(e) => {
+              setSquadId(e.target.value);
+              setTaskName("");
+            }}
             className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]"
           >
-            <option value="">— qualquer equipe —</option>
-            {squadsForDisplay.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            <option value="">— qualquer worker —</option>
+            {squadsForDisplay.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Tipo de entrega</label>
+          <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Processo</label>
           <select
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
             className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]"
           >
-            <option value="">— deixar o agente decidir —</option>
-            {filteredTasks.map((t) => <option key={`${t.squadId}-${t.slug}`} value={t.slug}>{t.label}</option>)}
+            <option value="">— deixar o cérebro decidir —</option>
+            {filteredTasks.map((t) => (
+              <option key={`${t.squadId}-${t.slug}`} value={t.slug}>
+                {t.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">O que você precisa?</label>
+        <label className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Demanda</label>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           rows={4}
-          placeholder="Ex: Preciso de 5 headlines para o lançamento do curso de copywriting do João. Público: empreendedores 35-50 anos. Tom: direto, sem enrolação."
+          placeholder="Ex: preciso estruturar um SOP de aprovação de conteúdos para a equipe interna."
           className="w-full border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-foreground placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] resize-none"
           required
         />
-        <p className="text-xs text-[var(--muted)]">
-          Quanto mais contexto, melhor o resultado. Fale como falaria para um colaborador sênior.
-        </p>
       </div>
 
       <button
@@ -396,7 +469,7 @@ export function NewDemandForm({ clients, squads, tasks }: {
         disabled={loading || !prompt.trim()}
         className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium bg-[var(--accent)] text-white transition hover:opacity-90 disabled:opacity-40"
       >
-        {loading ? "Enviando para o agente..." : "Enviar demanda →"}
+        {loading ? "Planejando execução..." : "Criar run →"}
       </button>
     </form>
   );

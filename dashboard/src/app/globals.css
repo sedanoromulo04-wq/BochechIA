@@ -1,52 +1,100 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --background: #f5f7fb;
-  --foreground: #101828;
-  --muted: #667085;
-  --surface: #ffffff;
-  --surface-subtle: #eef2f7;
-  --border: #d0d5dd;
-  --accent: #155eef;
-  --success: #067647;
-  --warning: #b54708;
-  --danger: #b42318;
+  --bg-base:     #040810;
+  --bg-surface:  #080f1e;
+  --bg-card:     #0d1628;
+  --bg-card2:    #111c30;
+  --border:      #1a2a44;
+  --border-glow: #1e3a5f;
+
+  --cyan:        #7cc4fa;
+  --cyan-bright: #38bdf8;
+  --cyan-dim:    #164e73;
+  --green:       #32d583;
+  --green-dim:   #064e3b;
+  --purple:      #a855f7;
+  --purple-dim:  #3b0764;
+  --yellow:      #fbbf24;
+  --yellow-dim:  #451a03;
+  --red:         #f87171;
+  --orange:      #fb923c;
+
+  --text-primary:   #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted:     #4a5568;
+  --text-accent:    #7cc4fa;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* aliases para compatibilidade com Tailwind vars existentes */
+  --background:      var(--bg-base);
+  --foreground:      var(--text-primary);
+  --muted:           var(--text-muted);
+  --surface:         var(--bg-card);
+  --surface-subtle:  var(--bg-card2);
+  --accent:          var(--cyan);
+  --success:         var(--green);
+  --warning:         var(--yellow);
+  --danger:          var(--red);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1220;
-    --foreground: #f8fafc;
-    --muted: #94a3b8;
-    --surface: #111827;
-    --surface-subtle: #1f2937;
-    --border: #334155;
-    --accent: #7cc4fa;
-    --success: #32d583;
-    --warning: #f79009;
-    --danger: #f97066;
-  }
-}
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  background: var(--background);
+  font-size: 14px;
+  scroll-behavior: smooth;
+  background: var(--bg-base);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── GRID NOISE BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124, 196, 250, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 196, 250, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 a {
@@ -54,9 +102,12 @@ a {
   text-decoration: none;
 }
 
-button,
-input,
-textarea,
-select {
+button, input, textarea, select {
   font: inherit;
 }
+
+/* scrollbar global */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-glow); }

@@ -6,16 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
   FileText,
   Brain,
   Settings,
   MessageSquare,
   TrendingUp,
-  Activity,
-  Calendar
+  Activity
 } from 'lucide-react';
 import { Client } from '@/types';
 
