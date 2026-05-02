@@ -13,13 +13,28 @@ export default async function ClientsPage() {
       title="Clientes"
       description="Gerencie os clientes cadastrados e os projetos em andamento."
     >
-      <div className="space-y-8">
+      <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+
+        {/* Clientes ativos */}
         <Section
           title={`Clientes ativos (${activeClients.length})`}
           action={
             <Link
               href="/dashboard/clients/new"
-              className="px-4 py-2 text-sm font-medium bg-[var(--accent)] text-white transition hover:opacity-90"
+              style={{
+                padding: "8px 16px",
+                fontSize: "12px",
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                background: "rgba(124,196,250,0.1)",
+                color: "var(--cyan)",
+                border: "1px solid rgba(124,196,250,0.25)",
+                borderRadius: "6px",
+                textDecoration: "none",
+                transition: "all 0.2s",
+              }}
             >
               + Novo cliente
             </Link>
@@ -31,7 +46,7 @@ export default async function ClientsPage() {
               body="Cadastre o primeiro cliente para começar a enviar demandas para os agentes."
             />
           ) : (
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" }}>
               {activeClients.map((client) => (
                 <ResourceCard
                   key={client.id}
@@ -39,17 +54,30 @@ export default async function ClientsPage() {
                   title={client.company}
                   subtitle={`${client.name} · ${client.niche}`}
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-3">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {/* Status + projects count */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
                       <StatusBadge value={client.status} />
-                      <span className="text-sm text-[var(--muted)]">
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
                         {client.projects.length} projeto(s)
                       </span>
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
+                    {/* Active squads */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                       {client.squads_active.map((s) => (
-                        <span key={s} className="text-xs border border-[var(--border)] px-2 py-0.5 text-[var(--muted)]">
-                          {s.replace("-squad","").replace("-masters","").replace("c-level","c-level")}
+                        <span
+                          key={s}
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "10px",
+                            color: "var(--text-muted)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "4px",
+                            padding: "2px 7px",
+                            letterSpacing: "0.04em",
+                          }}
+                        >
+                          {s.replace("-squad", "").replace("-masters", "").replace("c-level", "c-level")}
                         </span>
                       ))}
                     </div>
@@ -60,11 +88,10 @@ export default async function ClientsPage() {
           )}
         </Section>
 
+        {/* Pausados / Concluídos */}
         {otherClients.length > 0 && (
-          <Section
-            title="Pausados / Concluídos"
-          >
-            <div className="grid gap-4 lg:grid-cols-2">
+          <Section title="Pausados / Concluídos">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" }}>
               {otherClients.map((client) => (
                 <ResourceCard
                   key={client.id}
@@ -78,6 +105,7 @@ export default async function ClientsPage() {
             </div>
           </Section>
         )}
+
       </div>
     </DashboardShell>
   );
